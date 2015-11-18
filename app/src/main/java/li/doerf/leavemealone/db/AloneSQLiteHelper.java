@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.joda.time.DateTime;
+
 import li.doerf.leavemealone.db.tables.PhoneNumber;
 
 /**
@@ -23,6 +25,9 @@ public class AloneSQLiteHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         Log.i(LOGTAG, "Initializing Database: " + DATABASE_NAME);
         new PhoneNumber().createTable(db);
+
+        PhoneNumber.create("dummy", "+41791234567", "a mobile", DateTime.now()).insert(db);
+        PhoneNumber.create("dummy", "+41441111111", "a fixedline", DateTime.now()).insert( db);
     }
 
     @Override

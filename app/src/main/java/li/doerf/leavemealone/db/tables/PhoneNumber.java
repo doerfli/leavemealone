@@ -1,6 +1,7 @@
 package li.doerf.leavemealone.db.tables;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import org.joda.time.DateTime;
 
@@ -80,6 +81,36 @@ public class PhoneNumber extends TableBase {
         Map<String, Field> columnNamesAndFields = item.getColumnNamesWithFields();
         item.fillFromCursor(aCursor, columnNamesAndFields);
         return item;
+    }
+
+    public static Cursor listAll(SQLiteDatabase myDb) {
+        PhoneNumber item = new PhoneNumber();
+        return myDb.query(
+                item.getTableName(),
+                item.getColumnNames(),
+                null,
+                null,
+                null,
+                null,
+                "number");
+    }
+
+    public static PhoneNumber findByNumber(SQLiteDatabase myDb, String number) {
+        PhoneNumber item = new PhoneNumber();
+        Cursor c = myDb.query(
+                item.getTableName(),
+                item.getColumnNames(),
+                "number = ?",
+                new String[] { number },
+                null,
+                null,
+                "number");
+
+        if ( c.moveToFirst() ) {
+            return PhoneNumber.create(c);
+        }
+
+        return null;
     }
 
 }
