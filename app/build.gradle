@@ -32,4 +32,5 @@ dependencies {
     //compile 'com.google.code.gson:gson:2.3.1'                   // https://code.google.com/p/google-gson/
     compile 'com.google.guava:guava:18.0'
     compile 'joda-time:joda-time:2.7'
+    compile 'com.googlecode.libphonenumber:libphonenumber:7.2.1'
 }

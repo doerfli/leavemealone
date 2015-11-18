@@ -10,6 +10,8 @@ import com.android.internal.telephony.ITelephony;
 
 import java.lang.reflect.Method;
 
+import li.doerf.leavemealone.util.PhoneNumberHelper;
+
 /**
  * Created by moo on 15/11/15.
  */
@@ -25,11 +27,12 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String state = intent.getExtras().getString(TelephonyManager.EXTRA_STATE);
-        String incomingNumber = intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER);
+        String incomingNumber = PhoneNumberHelper.normalize(intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER));
         Log.d(LOGTAG, "reveived state change. state: "
                 + state
                 + ". number: "
                 + incomingNumber);
+
 
         if ( TelephonyManager.EXTRA_STATE_RINGING.equals( state) ) {
             // hang up call
