@@ -96,7 +96,9 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
 
+        SharedPreferences settings = getSharedPreferences(LeaveMeAloneApplication.PREFS_FILE, 0);
         Switch sw = (Switch) menu.findItem(R.id.action_switch).getActionView().findViewById(R.id.master_switch);
+        sw.setChecked( settings.getBoolean( LeaveMeAloneApplication.PREF_BLOCKER_ON_OFF, false));
         sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
