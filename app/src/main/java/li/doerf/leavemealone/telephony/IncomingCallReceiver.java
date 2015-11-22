@@ -8,10 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
-import com.android.internal.telephony.ITelephony;
-
-import java.lang.reflect.Method;
-
 import li.doerf.leavemealone.LeaveMeAloneApplication;
 import li.doerf.leavemealone.db.AloneSQLiteHelper;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
@@ -83,23 +79,14 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     }
 
     /**
-     * Move to separate class with interface
+     * Hang up the call.
      * @param context
      * @param incomingNumber
      */
     private void hangupCall(Context context, String incomingNumber) {
-        // hang up call
-        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        try {
-            Class c = Class.forName(tm.getClass().getName());
-            Method m = c.getDeclaredMethod("getITelephony");
-            m.setAccessible(true);
-            ITelephony telephonyService = (ITelephony) m.invoke(tm);
-            telephonyService.endCall();
-            Log.i(LOGTAG, "HANG UP " + incomingNumber);
-            // TODO show notification of blocked call
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ICallHangup ch = new CallHangupFactory().get();
+        boolean s = ch.hangup( context);
+        Log.i(LOGTAG, "HANG UP " + incomingNumber + " successful: " + s);
+        // TODO show notification of blocked call
     }
 }
