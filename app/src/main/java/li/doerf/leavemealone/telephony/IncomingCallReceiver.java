@@ -22,8 +22,6 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     private final String LOGTAG = getClass().getSimpleName();
 
     /**
-     * TODO this might be called twice. make sure that is handeled
-     *
      * @param context
      * @param intent
      */
@@ -36,30 +34,43 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                 + ". number: "
                 + incomingNumber);
 
-
-        if ( TelephonyManager.EXTRA_STATE_RINGING.equals( state) ) {
-            try {
-                // TODO make this more generic and don't instantiate db locally
-                AloneSQLiteHelper db = new AloneSQLiteHelper(context);
-                SQLiteDatabase readableDb = db.getReadableDatabase();
-                PhoneNumber number = PhoneNumber.findByNumber(readableDb, incomingNumber);
-
-                if (number != null) {
-                    hangupCall(context, incomingNumber);
-                } else {
-                    Log.d( LOGTAG, "no matching number found");
-//                    context.sendBroadcast(intent);
-
-                }
-
-                readableDb.close();
-                db.close();
-            } catch ( Throwable e) {
-                Log.e( LOGTAG, "caught Exception", e);
-            }
+        if ( incomingNumber == null ) {
+            // nothing to see here
+            return;
         }
+
+        if ( ! TelephonyManager.EXTRA_STATE_RINGING.equals( state) ) {
+            // we are not interested if its not ringing
+            return;
+        }
+
+        checkNumber(context, incomingNumber);
     }
 
+    /**
+     * Check of the number is registered in the database and if so, block it.
+     *
+     * @param context the context
+     * @param incomingNumber the number to check
+     */
+    private void checkNumber(Context context, String incomingNumber) {
+        SQLiteDatabase readableDb = AloneSQLiteHelper.getInstance(context).getReadableDatabase();
+        PhoneNumber number = PhoneNumber.findByNumber(readableDb, incomingNumber);
+
+        if (number != null) {
+            hangupCall(context, incomingNumber);
+        } else {
+            Log.d(LOGTAG, "no matching number found");
+        }
+
+        readableDb.close();
+    }
+
+    /**
+     * Move to separate class with interface
+     * @param context
+     * @param incomingNumber
+     */
     private void hangupCall(Context context, String incomingNumber) {
         // hang up call
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
@@ -70,6 +81,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             ITelephony telephonyService = (ITelephony) m.invoke(tm);
             telephonyService.endCall();
             Log.i(LOGTAG, "HANG UP " + incomingNumber);
+            // TODO show notification of blocked call
         } catch (Exception e) {
             e.printStackTrace();
         }

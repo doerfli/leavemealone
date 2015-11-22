@@ -16,8 +16,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import li.doerf.leavemealone.LeaveMeAloneApplication;
 import li.doerf.leavemealone.R;
+import li.doerf.leavemealone.db.AloneSQLiteHelper;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
 import li.doerf.leavemealone.ui.adapters.BlockedNumbersAdapter;
 
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        myReadbableDb = ((LeaveMeAloneApplication)getApplication()).getDbHelper().getReadableDatabase();
+        myReadbableDb = AloneSQLiteHelper.getInstance( getApplicationContext()).getReadableDatabase();
         myBlockedNumbersAdapter.swapCursor(PhoneNumber.listAll(myReadbableDb));
     }
 
