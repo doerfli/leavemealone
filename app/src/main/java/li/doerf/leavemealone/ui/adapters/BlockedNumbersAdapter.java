@@ -31,7 +31,14 @@ public class BlockedNumbersAdapter extends RecyclerViewCursorAdapter<RecyclerVie
     public void onBindViewHolder(RecyclerViewHolder holder, Cursor aCursor) {
         CardView cardView = (CardView) holder.getView();
         PhoneNumber number = PhoneNumber.create(aCursor);
+
         TextView numberView = (TextView) cardView.findViewById(R.id.number);
         numberView.setText( number.getNumber());
+
+        TextView nameView = (TextView) cardView.findViewById(R.id.name);
+        nameView.setText( number.getName());
+
+        TextView sourceView = (TextView) cardView.findViewById(R.id.source);
+        sourceView.setText( number.getSource());
     }
 }
