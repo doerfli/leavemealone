@@ -3,6 +3,7 @@ package li.doerf.leavemealone.telephony;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -11,6 +12,7 @@ import com.android.internal.telephony.ITelephony;
 
 import java.lang.reflect.Method;
 
+import li.doerf.leavemealone.LeaveMeAloneApplication;
 import li.doerf.leavemealone.db.AloneSQLiteHelper;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
 import li.doerf.leavemealone.util.PhoneNumberHelper;
@@ -54,6 +56,10 @@ public class IncomingCallReceiver extends BroadcastReceiver {
      * @param incomingNumber the number to check
      */
     private void checkNumber(Context context, String incomingNumber) {
+        if ( ! isMasterSwitchEnabled( context) ) {
+            return;
+        }
+
         SQLiteDatabase readableDb = AloneSQLiteHelper.getInstance(context).getReadableDatabase();
         PhoneNumber number = PhoneNumber.findByNumber(readableDb, incomingNumber);
 
@@ -64,6 +70,16 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         }
 
         readableDb.close();
+    }
+
+    /**
+     * Check state the master switch in the preferences.
+     * @param aContext
+     * @return <code>true</code> if the master switch is enabled and number should be blocked, <code>false</code> otherwise.
+     */
+    public boolean isMasterSwitchEnabled( Context aContext) {
+        SharedPreferences settings = aContext.getSharedPreferences(LeaveMeAloneApplication.PREFS_FILE, 0);
+        return settings.getBoolean( LeaveMeAloneApplication.PREF_BLOCKER_ON_OFF, false);
     }
 
     /**

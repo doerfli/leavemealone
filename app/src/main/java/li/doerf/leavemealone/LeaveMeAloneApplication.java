@@ -8,6 +8,8 @@ import android.util.Log;
  */
 public class LeaveMeAloneApplication extends Application {
     private final String LOGTAG = getClass().getSimpleName();
+    public static final String PREFS_FILE = "AlonePrefs";
+    public static final String PREF_BLOCKER_ON_OFF = "CallBlockerOnOff";
 
     @Override
     public void onCreate() {

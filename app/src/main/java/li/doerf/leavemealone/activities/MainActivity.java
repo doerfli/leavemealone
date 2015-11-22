@@ -1,5 +1,6 @@
 package li.doerf.leavemealone.activities;
 
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,10 +13,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
+import li.doerf.leavemealone.LeaveMeAloneApplication;
 import li.doerf.leavemealone.R;
 import li.doerf.leavemealone.db.AloneSQLiteHelper;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
@@ -24,6 +29,7 @@ import li.doerf.leavemealone.ui.adapters.BlockedNumbersAdapter;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String LOGTAG = "MainActivity";
     private RecyclerView myBlockedNumbersList;
     private BlockedNumbersAdapter myBlockedNumbersAdapter;
     private SQLiteDatabase myReadbableDb;
@@ -33,6 +39,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -88,6 +95,15 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        Switch sw = (Switch) menu.findItem(R.id.action_switch).getActionView().findViewById(R.id.master_switch);
+        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                toggleMasterSwitch(isChecked);
+            }
+        });
+
         return true;
     }
 
@@ -129,5 +145,13 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void toggleMasterSwitch(boolean isChecked) {
+        SharedPreferences settings = getSharedPreferences(LeaveMeAloneApplication.PREFS_FILE, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean(LeaveMeAloneApplication.PREF_BLOCKER_ON_OFF, isChecked);
+        editor.commit();
+        Log.i(LOGTAG, "app master switch: " + isChecked);
     }
 }
