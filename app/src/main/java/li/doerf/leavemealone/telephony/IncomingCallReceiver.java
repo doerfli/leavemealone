@@ -1,14 +1,21 @@
 package li.doerf.leavemealone.telephony;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.CallLog;
+import android.support.v7.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import li.doerf.leavemealone.LeaveMeAloneApplication;
+import li.doerf.leavemealone.R;
 import li.doerf.leavemealone.db.AloneSQLiteHelper;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
 import li.doerf.leavemealone.util.PhoneNumberHelper;
@@ -18,6 +25,7 @@ import li.doerf.leavemealone.util.PhoneNumberHelper;
  */
 public class IncomingCallReceiver extends BroadcastReceiver {
     private final String LOGTAG = getClass().getSimpleName();
+    private final static AtomicInteger notifyId = new AtomicInteger();
 
     /**
      * @param context
@@ -60,7 +68,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         PhoneNumber number = PhoneNumber.findByNumber(readableDb, incomingNumber);
 
         if (number != null) {
-            hangupCall(context, incomingNumber);
+            hangupCall(context, incomingNumber, number.getName());
         } else {
             Log.d(LOGTAG, "no matching number found");
         }
@@ -82,11 +90,46 @@ public class IncomingCallReceiver extends BroadcastReceiver {
      * Hang up the call.
      * @param context
      * @param incomingNumber
+     * @param aName
      */
-    private void hangupCall(Context context, String incomingNumber) {
+    private void hangupCall(Context context, String incomingNumber, String aName) {
         ICallHangup ch = new CallHangupFactory().get();
         boolean s = ch.hangup( context);
         Log.i(LOGTAG, "HANG UP " + incomingNumber + " successful: " + s);
-        // TODO show notification of blocked call
+        if ( s) {
+            showNotificationCallBlocked( context, incomingNumber, aName);
+        }
+    }
+
+    private void showNotificationCallBlocked(Context aContext, String incomingNumber, String aName) {
+        android.support.v4.app.NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder( aContext)
+                        // TODO show icon
+//                        .setSmallIcon(android.support.v7.appcompat.R.drawable.)
+                        .setSmallIcon(R.drawable.ic_menu_manage)
+                        .setContentTitle("Call blocked")
+                        .setContentText(incomingNumber + " (" + aName + ")");
+
+        Intent showCallLog = new Intent();
+        showCallLog.setAction(Intent.ACTION_VIEW);
+        showCallLog.setType(CallLog.Calls.CONTENT_TYPE);
+//        context.startActivity(showCallLog);
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        aContext,
+                        0,
+                        showCallLog,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+
+        // Sets an ID for the notification
+        int mNotificationId = notifyId.incrementAndGet();
+        // Gets an instance of the NotificationManager service
+        NotificationManager mNotifyMgr =
+                (NotificationManager) aContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        // Builds the notification and issues it.
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+        Log.d(LOGTAG, "notification build and issued");
     }
 }
