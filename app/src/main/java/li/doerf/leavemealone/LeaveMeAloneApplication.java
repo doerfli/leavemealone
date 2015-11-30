@@ -3,7 +3,10 @@ package li.doerf.leavemealone;
 import android.app.Application;
 import android.util.Log;
 
+import li.doerf.leavemealone.db.AloneSQLiteHelper;
+
 /**
+ * The application
  * Created by moo on 17/11/15.
  */
 public class LeaveMeAloneApplication extends Application {
@@ -20,5 +23,6 @@ public class LeaveMeAloneApplication extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
+        AloneSQLiteHelper.getInstance(getApplicationContext()).close();
     }
 }

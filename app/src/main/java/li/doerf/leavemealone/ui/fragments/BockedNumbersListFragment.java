@@ -63,8 +63,11 @@ public class BockedNumbersListFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        myReadbableDb.close();
         myReadbableDb = null;
         super.onDestroy();
+    }
+
+    public void refreshList() {
+        myBlockedNumbersAdapter.swapCursor(PhoneNumber.listAll(myReadbableDb));
     }
 }

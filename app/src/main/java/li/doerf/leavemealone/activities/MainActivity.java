@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -19,16 +18,22 @@ import android.widget.Switch;
 
 import li.doerf.leavemealone.LeaveMeAloneApplication;
 import li.doerf.leavemealone.R;
+import li.doerf.leavemealone.db.tables.PhoneNumber;
+import li.doerf.leavemealone.ui.dialogs.AddNumberDialogFragment;
+import li.doerf.leavemealone.ui.fragments.BockedNumbersListFragment;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, AddNumberDialogFragment.NumberAddedListener {
 
     private static final String LOGTAG = "MainActivity";
+    private BockedNumbersListFragment myBockedNumbersFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        myBockedNumbersFragment = BockedNumbersListFragment.newInstance();
+        getSupportFragmentManager().beginTransaction().add( R.id.fragment_container, myBockedNumbersFragment).commit();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
@@ -37,8 +42,8 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                AddNumberDialogFragment newFragment = new AddNumberDialogFragment();
+                newFragment.show(getSupportFragmentManager(), "addnumber");
             }
         });
 
@@ -126,5 +131,11 @@ public class MainActivity extends AppCompatActivity
         editor.putBoolean(LeaveMeAloneApplication.PREF_BLOCKER_ON_OFF, isChecked);
         editor.commit();
         Log.i(LOGTAG, "app master switch: " + isChecked);
+    }
+
+    @Override
+    public void numberAdded(PhoneNumber aNumber) {
+        Log.d(LOGTAG, "refreshing list");
+        myBockedNumbersFragment.refreshList();
     }
 }

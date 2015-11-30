@@ -21,13 +21,13 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <fragment android:name="li.doerf.leavemealone.ui.fragments.BockedNumbersListFragment"
-        android:id="@+id/list"
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:layout="@layout/fragment_blocked_numbers_list" />
+        />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
