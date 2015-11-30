@@ -18,6 +18,7 @@ import org.joda.time.DateTime;
 import li.doerf.leavemealone.R;
 import li.doerf.leavemealone.db.AloneSQLiteHelper;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
+import li.doerf.leavemealone.util.PhoneNumberHelper;
 
 /**
  * The fragment used to add new numbers.
@@ -64,6 +65,7 @@ public class AddNumberDialogFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         myNumber = ((EditText) view.findViewById( R.id.number)).getText().toString();
+                        myNumber = PhoneNumberHelper.normalize( myNumber);
                         myName = ((EditText) view.findViewById( R.id.name)).getText().toString();
 
                         SQLiteDatabase db = AloneSQLiteHelper.getInstance(getContext()).getWritableDatabase();
