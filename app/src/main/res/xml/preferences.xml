@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/pref_title_general"
+        android:key="pref_key_storage_settings">
+        <CheckBoxPreference
+            android:key="@string/pref_key_master_switch"
+            android:summary="@string/pref_summary_on_off"
+            android:title="@string/pref_title_on_off"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+</PreferenceScreen>

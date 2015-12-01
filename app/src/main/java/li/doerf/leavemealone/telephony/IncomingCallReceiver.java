@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 import android.provider.CallLog;
 import android.support.v7.app.NotificationCompat;
 import android.telephony.TelephonyManager;
@@ -14,7 +15,6 @@ import android.util.Log;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import li.doerf.leavemealone.LeaveMeAloneApplication;
 import li.doerf.leavemealone.R;
 import li.doerf.leavemealone.db.AloneSQLiteHelper;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
@@ -82,8 +82,8 @@ public class IncomingCallReceiver extends BroadcastReceiver {
      * @return <code>true</code> if the master switch is enabled and number should be blocked, <code>false</code> otherwise.
      */
     public boolean isMasterSwitchEnabled( Context aContext) {
-        SharedPreferences settings = aContext.getSharedPreferences(LeaveMeAloneApplication.PREFS_FILE, 0);
-        return settings.getBoolean( LeaveMeAloneApplication.PREF_BLOCKER_ON_OFF, false);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(aContext);
+        return settings.getBoolean( aContext.getString(R.string.pref_key_master_switch), false);
     }
 
     /**

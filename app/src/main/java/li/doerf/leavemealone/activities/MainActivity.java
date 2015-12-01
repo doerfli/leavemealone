@@ -1,7 +1,9 @@
 package li.doerf.leavemealone.activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,7 +18,6 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
-import li.doerf.leavemealone.LeaveMeAloneApplication;
 import li.doerf.leavemealone.R;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
 import li.doerf.leavemealone.ui.dialogs.AddNumberDialogFragment;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final String LOGTAG = "MainActivity";
     private BockedNumbersListFragment myBockedNumbersFragment;
+    private Switch myMasterSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +60,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        if ( myMasterSwitch != null ) {
+            boolean masterSwitchEnabled = isMasterSwitchEnabled();
+            Log.d(LOGTAG, "setting master switch: " + masterSwitchEnabled);
+            myMasterSwitch.setChecked(masterSwitchEnabled);
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -72,15 +85,17 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
 
-        SharedPreferences settings = getSharedPreferences(LeaveMeAloneApplication.PREFS_FILE, 0);
-        Switch sw = (Switch) menu.findItem(R.id.action_switch).getActionView().findViewById(R.id.master_switch);
-        sw.setChecked( settings.getBoolean( LeaveMeAloneApplication.PREF_BLOCKER_ON_OFF, false));
-        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        myMasterSwitch = (Switch) menu.findItem(R.id.action_switch).getActionView().findViewById(R.id.master_switch);
+        myMasterSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 toggleMasterSwitch(isChecked);
             }
         });
+
+        boolean masterSwitchEnabled = isMasterSwitchEnabled();
+        Log.d(LOGTAG, "setting master switch: " + masterSwitchEnabled);
+        myMasterSwitch.setChecked(masterSwitchEnabled);
 
         return true;
     }
@@ -94,6 +109,8 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent i = new Intent( getBaseContext(), SettingsActivity.class);
+            startActivity(i);
             return true;
         }
 
@@ -126,11 +143,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void toggleMasterSwitch(boolean isChecked) {
-        SharedPreferences settings = getSharedPreferences(LeaveMeAloneApplication.PREFS_FILE, 0);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean(LeaveMeAloneApplication.PREF_BLOCKER_ON_OFF, isChecked);
+        editor.putBoolean( getString(R.string.pref_key_master_switch), isChecked);
         editor.commit();
         Log.i(LOGTAG, "app master switch: " + isChecked);
+    }
+
+    private boolean isMasterSwitchEnabled() {
+        return PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(getString(R.string.pref_key_master_switch), false);
     }
 
     @Override
