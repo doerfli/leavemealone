@@ -106,7 +106,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                 new NotificationCompat.Builder( aContext)
                         // TODO show icon
 //                        .setSmallIcon(android.support.v7.appcompat.R.drawable.)
-                        .setSmallIcon(R.drawable.ic_menu_manage)
+                        .setSmallIcon(R.drawable.ic_not_interested_white_24dp)
                         .setContentTitle("Call blocked")
                         .setContentText(incomingNumber + " (" + aName + ")");
 
