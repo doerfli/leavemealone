@@ -1,6 +1,5 @@
 package li.doerf.leavemealone.telephony;
 
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -190,14 +189,6 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
         mBuilder.setContentIntent(resultPendingIntent);
-
-        // Sets an ID for the notification
-        int mNotificationId = NotificationHelper.getNotificationId();
-        // Gets an instance of the NotificationManager service
-        NotificationManager mNotifyMgr =
-                (NotificationManager) aContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        // Builds the notification and issues it.
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
-        Log.d(LOGTAG, "notification build and issued");
+        NotificationHelper.notify(aContext, mBuilder.build());
     }
 }

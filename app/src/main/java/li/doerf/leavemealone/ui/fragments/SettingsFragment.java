@@ -48,30 +48,28 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             boolean isSet = sharedPreferences.getBoolean(
                     getActivity().getBaseContext().getString(R.string.pref_key_only_allow_contacts), false);
             Log.i( LOGTAG, "only allow contacts: " + isSet);
-            NotificationManager mNotifyMgr =
-                    (NotificationManager) getActivity().getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
             if ( isSet) {
                 android.support.v4.app.NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder( getActivity().getBaseContext())
                                 .setSmallIcon(R.drawable.ic_contact_phone_white_48dp)
                                 .setContentTitle("Only calls from contacts allowed");
+                // TODO add intent to navigate to settings to disable
+                // TODO add text "click to go to settings"
                 Notification notification = mBuilder.build();
                 notification.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
-
-                // Sets an ID for the notification
-                // Gets an instance of the NotificationManager service
-                // Builds the notification and issues it.
-                mNotificationId = NotificationHelper.getNotificationId();
-                mNotifyMgr.notify(mNotificationId, notification);
-                Log.d(LOGTAG, "notification build and issued");
+                mNotificationId = NotificationHelper.notify( getActivity().getBaseContext(), notification);
             } else {
                 if ( mNotificationId != null ) {
-                    mNotifyMgr.cancel(mNotificationId);
+                    NotificationManager notificationManager =
+                            (NotificationManager) getActivity().getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificationManager.cancel(mNotificationId);
+                    Log.d( LOGTAG, "cancelled notification: " + mNotificationId);
                     mNotificationId = null;
-                    Log.d( LOGTAG, "removed notification");
                 }
             }
         }
+
+        // TODO is masterswitch: check state of "only from contacts" and issue notification is necessary
     }
 }

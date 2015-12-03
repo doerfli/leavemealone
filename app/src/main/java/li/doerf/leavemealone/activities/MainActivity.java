@@ -146,6 +146,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void toggleMasterSwitch(boolean isChecked) {
+        // TODO check state of "only from contacts" and issue notification is necessary
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean( getString(R.string.pref_key_master_switch), isChecked);
