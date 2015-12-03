@@ -77,17 +77,28 @@ public class IncomingCallReceiver extends BroadcastReceiver {
      */
     private void checkNumber(Context context, String incomingNumber) {
         if ( ! isMasterSwitchEnabled( context) ) {
+            Log.d( LOGTAG, "call blocked disabled");
             return;
         }
 
-        if ( isNumberInContacts( context, incomingNumber)) {
-            return;
+        if ( isAlwaysAllowContacts(context) ) {
+            if ( isNumberInContacts( context, incomingNumber)) {
+                Log.i( LOGTAG, "number in contacts");
+                return;
+            }
+
+            if ( isOnlyAllowContacts( context)) {
+                Log.i( LOGTAG, "number not in contacts");
+                hangupCall(context, incomingNumber, "Caller not in contats");
+                return;
+            }
         }
 
         SQLiteDatabase readableDb = AloneSQLiteHelper.getInstance(context).getReadableDatabase();
         PhoneNumber number = PhoneNumber.findByNumber(readableDb, incomingNumber);
 
         if (number != null) {
+            Log.i( LOGTAG, "number in list of blocked numbers");
             hangupCall(context, incomingNumber, number.getName());
         } else {
             Log.d(LOGTAG, "no matching number found");
@@ -102,6 +113,26 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     public boolean isMasterSwitchEnabled( Context aContext) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(aContext);
         return settings.getBoolean( aContext.getString(R.string.pref_key_master_switch), false);
+    }
+
+    /**
+     * Check state of the "always allow contacts" flag in the preferences.
+     * @param aContext
+     * @return
+     */
+    public boolean isAlwaysAllowContacts( Context aContext) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(aContext);
+        return settings.getBoolean( aContext.getString(R.string.pref_key_always_allow_contacts), false);
+    }
+
+    /**
+     * Check state of the "only allow contacts" flag in the preferences.
+     * @param aContext
+     * @return <code>true</code> if the master switch is enabled and number should be blocked, <code>false</code> otherwise.
+     */
+    public boolean isOnlyAllowContacts( Context aContext) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(aContext);
+        return settings.getBoolean( aContext.getString(R.string.pref_key_only_allow_contacts), false);
     }
 
     public boolean isNumberInContacts( Context aContext, String number) {

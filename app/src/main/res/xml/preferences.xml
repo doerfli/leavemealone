@@ -5,8 +5,23 @@
         android:key="pref_key_storage_settings">
         <CheckBoxPreference
             android:key="@string/pref_key_master_switch"
-            android:summary="@string/pref_summary_on_off"
             android:title="@string/pref_title_on_off"
+            android:summary="@string/pref_summary_on_off"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/pref_title_filters"
+        android:key="pref_key_filters">
+        <CheckBoxPreference
+            android:key="@string/pref_key_always_allow_contacts"
+            android:title="@string/pref_title_always_allow_contacts"
+            android:summary="@string/pref_summary_always_allow_contacts"
+            android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="@string/pref_key_only_allow_contacts"
+            android:title="@string/pref_title_only_allow_contacts"
+            android:summary="@string/pref_summary_only_allow_contacts"
+            android:dependency="@string/pref_key_always_allow_contacts"
             android:defaultValue="false" />
     </PreferenceCategory>
 </PreferenceScreen>

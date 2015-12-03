@@ -15,4 +15,11 @@
     <string name="pref_key_master_switch">CallBlockerOnOff</string>
     <string name="pref_title_on_off">Enable call blocker</string>
     <string name="pref_summary_on_off">When enabled, all incoming calls registered in the blocked number list will be blocked.</string>
+    <string name="pref_title_filters">Filter</string>
+    <string name="pref_key_always_allow_contacts">AlwaysAllowFromContacts</string>
+    <string name="pref_title_always_allow_contacts">Always allow contacts</string>
+    <string name="pref_summary_always_allow_contacts">Never block calls from numbers which are registered in your contacts</string>
+    <string name="pref_key_only_allow_contacts">OnlyAllowContacts</string>
+    <string name="pref_title_only_allow_contacts">Only allow contacts</string>
+    <string name="pref_summary_only_allow_contacts">Calls from numbers not in your contacts will always be blocked</string>
 </resources>
