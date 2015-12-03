@@ -36,9 +36,12 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         myBockedNumbersFragment = BockedNumbersListFragment.newInstance();
         getSupportFragmentManager().beginTransaction().add( R.id.fragment_container, myBockedNumbersFragment).commit();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
