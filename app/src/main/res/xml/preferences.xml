@@ -11,6 +11,7 @@
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/pref_title_filters"
+        android:dependency="@string/pref_key_master_switch"
         android:key="pref_key_filters">
         <CheckBoxPreference
             android:key="@string/pref_key_always_allow_contacts"

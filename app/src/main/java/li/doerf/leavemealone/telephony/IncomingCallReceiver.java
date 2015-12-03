@@ -18,11 +18,10 @@ import android.support.v7.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import li.doerf.leavemealone.R;
 import li.doerf.leavemealone.db.AloneSQLiteHelper;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
+import li.doerf.leavemealone.util.NotificationHelper;
 import li.doerf.leavemealone.util.PhoneNumberHelper;
 
 /**
@@ -30,7 +29,7 @@ import li.doerf.leavemealone.util.PhoneNumberHelper;
  */
 public class IncomingCallReceiver extends BroadcastReceiver {
     private final String LOGTAG = getClass().getSimpleName();
-    private final static AtomicInteger notifyId = new AtomicInteger();
+
     private static String myIsRingingFrom = null;
 
     /**
@@ -176,8 +175,6 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     private void showNotificationCallBlocked(Context aContext, String incomingNumber, String aName) {
         android.support.v4.app.NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder( aContext)
-                        // TODO show icon
-//                        .setSmallIcon(android.support.v7.appcompat.R.drawable.)
                         .setSmallIcon(R.drawable.ic_not_interested_white_24dp)
                         .setContentTitle("Call blocked")
                         .setContentText(incomingNumber + " (" + aName + ")");
@@ -185,7 +182,6 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         Intent showCallLog = new Intent();
         showCallLog.setAction(Intent.ACTION_VIEW);
         showCallLog.setType(CallLog.Calls.CONTENT_TYPE);
-//        context.startActivity(showCallLog);
         PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(
                         aContext,
@@ -196,7 +192,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         mBuilder.setContentIntent(resultPendingIntent);
 
         // Sets an ID for the notification
-        int mNotificationId = notifyId.incrementAndGet();
+        int mNotificationId = NotificationHelper.getNotificationId();
         // Gets an instance of the NotificationManager service
         NotificationManager mNotifyMgr =
                 (NotificationManager) aContext.getSystemService(Context.NOTIFICATION_SERVICE);
