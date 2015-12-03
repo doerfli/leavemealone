@@ -3,12 +3,17 @@ package li.doerf.leavemealone.telephony;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.provider.BaseColumns;
 import android.provider.CallLog;
+import android.provider.ContactsContract;
 import android.support.v7.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -26,6 +31,7 @@ import li.doerf.leavemealone.util.PhoneNumberHelper;
 public class IncomingCallReceiver extends BroadcastReceiver {
     private final String LOGTAG = getClass().getSimpleName();
     private final static AtomicInteger notifyId = new AtomicInteger();
+    private static String myIsRingingFrom = null;
 
     /**
      * @param context
@@ -35,20 +41,30 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String state = intent.getExtras().getString(TelephonyManager.EXTRA_STATE);
         String incomingNumber = PhoneNumberHelper.normalize(intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER));
+
+        if ( myIsRingingFrom != null && myIsRingingFrom.equals( incomingNumber)) {
+            // already ringing
+            return;
+        }
+
         Log.d(LOGTAG, "reveived state change. state: "
                 + state
                 + ". number: "
                 + incomingNumber);
 
         if ( incomingNumber == null ) {
+            myIsRingingFrom = null;
             // nothing to see here
             return;
         }
 
         if ( ! TelephonyManager.EXTRA_STATE_RINGING.equals( state) ) {
+            myIsRingingFrom = null;
             // we are not interested if its not ringing
             return;
         }
+
+        myIsRingingFrom = incomingNumber;
 
         checkNumber(context, incomingNumber);
     }
@@ -64,6 +80,10 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             return;
         }
 
+        if ( isNumberInContacts( context, incomingNumber)) {
+            return;
+        }
+
         SQLiteDatabase readableDb = AloneSQLiteHelper.getInstance(context).getReadableDatabase();
         PhoneNumber number = PhoneNumber.findByNumber(readableDb, incomingNumber);
 
@@ -72,8 +92,6 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         } else {
             Log.d(LOGTAG, "no matching number found");
         }
-
-        readableDb.close();
     }
 
     /**
@@ -84,6 +102,29 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     public boolean isMasterSwitchEnabled( Context aContext) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(aContext);
         return settings.getBoolean( aContext.getString(R.string.pref_key_master_switch), false);
+    }
+
+    public boolean isNumberInContacts( Context aContext, String number) {
+        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
+
+        ContentResolver contentResolver = aContext.getContentResolver();
+        Cursor contactLookup = contentResolver.query(uri, new String[]{BaseColumns._ID,
+                ContactsContract.PhoneLookup.DISPLAY_NAME}, null, null, null);
+
+        try {
+            if (contactLookup != null && contactLookup.getCount() > 0) {
+                contactLookup.moveToNext();
+                String name = contactLookup.getString(contactLookup.getColumnIndex(ContactsContract.Data.DISPLAY_NAME));
+                Log.d(LOGTAG, "found contact for number: " + name);
+                return true;
+            }
+        } finally {
+            if (contactLookup != null) {
+                contactLookup.close();
+            }
+        }
+
+        return false;
     }
 
     /**
