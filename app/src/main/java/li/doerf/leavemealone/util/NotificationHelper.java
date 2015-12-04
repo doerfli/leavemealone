@@ -59,6 +59,8 @@ public class NotificationHelper {
         Log.d( LOGTAG, "isOnlyAllowContacts: " + isOnlyAllowContacts);
 
         int notificationId = settings.getInt(PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, -1);
+        NotificationManager notificationManager =
+                (NotificationManager) aContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if ( isMasterSwitchSet && isAlwaysAllowContacts && isOnlyAllowContacts ) {
             if ( notificationId > -1 ) {
@@ -78,8 +80,6 @@ public class NotificationHelper {
             settings.edit().putInt( PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, notificationId).commit();
         } else {
             if ( notificationId > -1 ) {
-                NotificationManager notificationManager =
-                        (NotificationManager) aContext.getSystemService(Context.NOTIFICATION_SERVICE);
                 notificationManager.cancel(notificationId);
                 Log.d( LOGTAG, "cancelled notification: " + notificationId);
                 settings.edit().putInt( PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, -1).commit();

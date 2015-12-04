@@ -2,9 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="li.doerf.leavemealone">
 
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <!-- get notified when phone rings -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- change call state (hang up call) -->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <!-- check if number is in contacts -->
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <!-- get intent on reboot -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".LeaveMeAloneApplication"
@@ -24,11 +29,16 @@
         </activity>
         <activity
             android:name=".activities.SettingsActivity"
-            android:parentActivityName=".activities.MainActivity"/>
-        <receiver
-            android:name=".telephony.IncomingCallReceiver">
+            android:parentActivityName=".activities.MainActivity" />
+
+        <receiver android:name=".telephony.IncomingCallReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".receiver.CheckForNotificationAtBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>

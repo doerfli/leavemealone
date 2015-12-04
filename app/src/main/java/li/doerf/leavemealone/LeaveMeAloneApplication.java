@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.Log;
 
 import li.doerf.leavemealone.db.AloneSQLiteHelper;
+import li.doerf.leavemealone.util.NotificationHelper;
 
 /**
  * The application
@@ -16,6 +17,7 @@ public class LeaveMeAloneApplication extends Application {
     public void onCreate() {
         Log.v(LOGTAG, "Application onCreate");
         super.onCreate();
+        NotificationHelper.setNotificationOnlyFromContacts( getBaseContext());
     }
 
     @Override
