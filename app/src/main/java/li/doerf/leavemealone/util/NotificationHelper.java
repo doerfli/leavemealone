@@ -59,7 +59,7 @@ public class NotificationHelper {
                 aContext.getString(R.string.pref_key_only_allow_contacts), false);
         Log.d( LOGTAG, "isMasterSwitchSet: " + isMasterSwitchSet);
         Log.d( LOGTAG, "isAlwaysAllowContacts: " + isAlwaysAllowContacts);
-        Log.d( LOGTAG, "isOnlyAllowContacts: " + isOnlyAllowContacts);
+        Log.d(LOGTAG, "isOnlyAllowContacts: " + isOnlyAllowContacts);
 
         int notificationId = settings.getInt(PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, -1);
         NotificationManager notificationManager =
@@ -96,5 +96,17 @@ public class NotificationHelper {
                 settings.edit().putInt( PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, -1).commit();
             }
         }
+    }
+
+    public static void resetNotificationOnlyFromContacts( Context aContext) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(aContext);
+        int notificationId = settings.getInt(PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, -1);
+        if ( notificationId > -1) {
+            NotificationManager notificationManager =
+                    (NotificationManager) aContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancel(notificationId);
+            settings.edit().putInt( NotificationHelper.PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, -1).commit();
+        }
+        setNotificationOnlyFromContacts( aContext);
     }
 }
