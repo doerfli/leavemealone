@@ -3,9 +3,14 @@ package li.doerf.leavemealone.util;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import java.util.concurrent.atomic.AtomicInteger;
+
+import li.doerf.leavemealone.R;
 
 /**
  * Created by moo on 04/12/15.
@@ -13,6 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class NotificationHelper {
     private final static String LOGTAG = "NotificationHelper";
     private final static AtomicInteger notifyId = new AtomicInteger();
+    public static final String PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS = "OnlyAllowFromContactsNotificationId";
 
     public static int getNotificationId() {
         return notifyId.incrementAndGet();
@@ -28,5 +34,56 @@ public class NotificationHelper {
         notificationManager.notify(notificationId, aNotification);
         Log.d(LOGTAG, "notification build and issued: " + notificationId);
         return notificationId;
+    }
+
+    /**
+     * set/unset the notification to indicate that only calls from contacts are allowed.
+     * This is done by evaluation the state of the preference {@link li.doerf.leavemealone.R.string#pref_key_master_switch}
+     * and {@link li.doerf.leavemealone.R.string#pref_key_only_allow_contacts}.
+     * If both are set, then check if the notification is active (id > -1). If not, created a new
+     * notification. If the keys are not set, then remove any existing notification (if it is set).
+     *
+     * @param aContext the application context
+     */
+    public static void setNotificationOnlyFromContacts( Context aContext) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(aContext);
+
+        boolean isMasterSwitchSet = settings.getBoolean(
+                aContext.getString(R.string.pref_key_master_switch), false);
+        boolean isAlwaysAllowContacts = settings.getBoolean(
+                aContext.getString(R.string.pref_key_always_allow_contacts), false);
+        boolean isOnlyAllowContacts = settings.getBoolean(
+                aContext.getString(R.string.pref_key_only_allow_contacts), false);
+        Log.d( LOGTAG, "isMasterSwitchSet: " + isMasterSwitchSet);
+        Log.d( LOGTAG, "isAlwaysAllowContacts: " + isAlwaysAllowContacts);
+        Log.d( LOGTAG, "isOnlyAllowContacts: " + isOnlyAllowContacts);
+
+        int notificationId = settings.getInt(PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, -1);
+
+        if ( isMasterSwitchSet && isAlwaysAllowContacts && isOnlyAllowContacts ) {
+            if ( notificationId > -1 ) {
+                return;
+            }
+
+            android.support.v4.app.NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder( aContext)
+                            .setSmallIcon(R.drawable.ic_contact_phone_white_48dp)
+                            .setContentTitle("Only calls from contacts allowed");
+            // TODO add intent to navigate to settings to disable
+            // TODO add text "click to go to settings"
+            Notification notification = mBuilder.build();
+            notification.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
+            notificationId = NotificationHelper.notify( aContext, notification);
+            Log.d( LOGTAG, "issued notification: " + notificationId);
+            settings.edit().putInt( PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, notificationId).commit();
+        } else {
+            if ( notificationId > -1 ) {
+                NotificationManager notificationManager =
+                        (NotificationManager) aContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.cancel(notificationId);
+                Log.d( LOGTAG, "cancelled notification: " + notificationId);
+                settings.edit().putInt( PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, -1).commit();
+            }
+        }
     }
 }

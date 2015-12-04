@@ -22,6 +22,7 @@ import li.doerf.leavemealone.R;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
 import li.doerf.leavemealone.ui.dialogs.AddNumberDialogFragment;
 import li.doerf.leavemealone.ui.fragments.BockedNumbersListFragment;
+import li.doerf.leavemealone.util.NotificationHelper;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AddNumberDialogFragment.NumberAddedListener {
@@ -146,12 +147,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void toggleMasterSwitch(boolean isChecked) {
-        // TODO check state of "only from contacts" and issue notification is necessary
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean( getString(R.string.pref_key_master_switch), isChecked);
         editor.commit();
         Log.i(LOGTAG, "app master switch: " + isChecked);
+        NotificationHelper.setNotificationOnlyFromContacts( getBaseContext());
     }
 
     private boolean isMasterSwitchEnabled() {
