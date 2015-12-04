@@ -2,7 +2,9 @@ package li.doerf.leavemealone.util;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.NotificationCompat;
@@ -11,6 +13,7 @@ import android.util.Log;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import li.doerf.leavemealone.R;
+import li.doerf.leavemealone.activities.SettingsActivity;
 
 /**
  * Created by moo on 04/12/15.
@@ -70,10 +73,18 @@ public class NotificationHelper {
             android.support.v4.app.NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder( aContext)
                             .setSmallIcon(R.drawable.ic_contact_phone_white_48dp)
-                            .setContentTitle("Only calls from contacts allowed");
-            // TODO add intent to navigate to settings to disable
-            // TODO add text "click to go to settings"
+                            .setContentTitle("Only calls from contacts allowed")
+                            .setContentText("Click to open settings");
+            PendingIntent settingsPendingIntent =
+                    PendingIntent.getActivity(
+                            aContext,
+                            0,
+                            new Intent(aContext, SettingsActivity.class),
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    );
+            mBuilder.setContentIntent(settingsPendingIntent);
             Notification notification = mBuilder.build();
+
             notification.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
             notificationId = NotificationHelper.notify( aContext, notification);
             Log.d( LOGTAG, "issued notification: " + notificationId);
