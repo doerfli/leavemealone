@@ -112,8 +112,20 @@ abstract class TableBase  {
         return columnNamesAndFields;
     }
 
+    public String getPrimaryKeyColumnName() {
+        Map<String, Field> columns = getColumnNamesWithFields();
+        for ( Map.Entry<String,Field> e : columns.entrySet() ) {
+            Column c = getColumn( e.getValue());
+            if ( c.isPrimaryKey()) {
+                return e.getKey();
+            }
+        }
+
+        throw new IllegalStateException( "Table does not have primary key");
+    }
+
     private Column getColumn(Field aField) {
-        return aField.getAnnotation( Column.class);
+        return aField.getAnnotation(Column.class);
     }
 
     private boolean isPrimaryKey( Field aField) {
@@ -258,4 +270,14 @@ abstract class TableBase  {
 
         return -1;
     }
+
+    public void delete( SQLiteDatabase db) {
+        String idAsString = Long.toString(getId());
+        db.delete(
+                getTableName(),
+                getPrimaryKeyColumnName() + " = ?",
+                new String[] { idAsString });
+        Log.i(LOGTAG, "Deleted entity - id: " + idAsString);
+    }
+
 }

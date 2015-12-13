@@ -6,7 +6,8 @@
         android:id="@+id/action_switch"
         android:title="@string/onoff_switch"
         app:actionLayout="@layout/toolbar_switch"
-        app:showAsAction="always" />
+        app:showAsAction="always"
+        android:visible="false"/>
 
     <item
         android:id="@+id/action_settings"

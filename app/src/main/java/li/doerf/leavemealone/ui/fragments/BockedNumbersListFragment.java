@@ -5,7 +5,11 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -14,17 +18,19 @@ import li.doerf.leavemealone.R;
 import li.doerf.leavemealone.db.AloneSQLiteHelper;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
 import li.doerf.leavemealone.ui.adapters.BlockedNumbersAdapter;
+import li.doerf.leavemealone.ui.adapters.MultiSelector;
 
 /**
  * This fragment show the list of blocked numbers (loaded from the database).
  *
  * Created by moo on 23/11/15.
  */
-public class BockedNumbersListFragment extends Fragment {
+public class BockedNumbersListFragment extends Fragment implements MultiSelector.SelectableModeListener {
     private final String LOGTAG = getClass().getSimpleName();
     private RecyclerView myBlockedNumbersList;
     private BlockedNumbersAdapter myBlockedNumbersAdapter;
     private SQLiteDatabase myReadbableDb;
+    private boolean myShowListMultiselectModeMenu = false;
 
     public static BockedNumbersListFragment newInstance() {
         return new BockedNumbersListFragment();
@@ -33,8 +39,9 @@ public class BockedNumbersListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         myReadbableDb = AloneSQLiteHelper.getInstance(getContext()).getReadableDatabase();
-        myBlockedNumbersAdapter = new BlockedNumbersAdapter( getContext(), null);
+        myBlockedNumbersAdapter = new BlockedNumbersAdapter( getContext(), null, this);
     }
 
     @Override
@@ -48,6 +55,29 @@ public class BockedNumbersListFragment extends Fragment {
         myBlockedNumbersList.setAdapter(myBlockedNumbersAdapter);
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if (myShowListMultiselectModeMenu) {
+            menu.clear();
+            inflater.inflate(R.menu.list_multiselect, menu);
+        } else {
+            super.onCreateOptionsMenu(menu, inflater);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if ( id == R.id.action_delete) {
+            Log.i(LOGTAG, "delete items selected");
+            myBlockedNumbersAdapter.deleteSelectedItems();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -69,5 +99,11 @@ public class BockedNumbersListFragment extends Fragment {
 
     public void refreshList() {
         myBlockedNumbersAdapter.swapCursor(PhoneNumber.listAll(myReadbableDb));
+    }
+
+    @Override
+    public void selectableModeChanged(boolean aState) {
+        myShowListMultiselectModeMenu = aState;
+        getActivity().supportInvalidateOptionsMenu();
     }
 }
