@@ -18,7 +18,6 @@ public class MultiSelector {
     private SparseBooleanArray mSelectedPositions = new SparseBooleanArray();
     private boolean mIsSelectable = false;
 
-    // TODO switch to interface
     public MultiSelector(RecyclerViewCursorAdapter adapter, SelectableModeListener selectableModeListener) {
         myAdapter = adapter;
         myFragment = selectableModeListener;
