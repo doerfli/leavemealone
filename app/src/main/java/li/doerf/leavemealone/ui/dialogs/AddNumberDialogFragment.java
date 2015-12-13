@@ -9,8 +9,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import org.joda.time.DateTime;
@@ -59,19 +61,16 @@ public class AddNumberDialogFragment extends DialogFragment {
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         final View view = inflater.inflate(R.layout.dialog_add_number, null);
+
         builder.setView(view)
                 // Add action buttons
                 .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        myNumber = ((EditText) view.findViewById( R.id.number)).getText().toString();
-                        myNumber = PhoneNumberHelper.normalize( myNumber);
-                        myName = ((EditText) view.findViewById( R.id.name)).getText().toString();
-
-                        SQLiteDatabase db = AloneSQLiteHelper.getInstance(getContext()).getWritableDatabase();
-                        PhoneNumber number = PhoneNumber.create( "manual", myNumber, myName, DateTime.now());
-                        number.insert(db);
-                        myListener.numberAdded(number);
+                        myNumber = ((EditText) view.findViewById(R.id.number)).getText().toString();
+                        myNumber = PhoneNumberHelper.normalize(myNumber);
+                        myName = ((EditText) view.findViewById(R.id.name)).getText().toString();
+                        addPhoneNumberToDb(myNumber, myName);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -81,6 +80,52 @@ public class AddNumberDialogFragment extends DialogFragment {
                         AddNumberDialogFragment.this.getDialog().cancel();
                     }
                 });
-        return builder.create();
+
+        final AlertDialog dialog = builder.create();
+
+        // enable number validation on key pressed
+        EditText numberInput = (EditText) view.findViewById( R.id.number);
+        numberInput.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_UP) {
+                    // validate entered number and set
+                    String number = ((EditText) v).getText().toString();
+                    Log.d( LOGTAG, "validating number: " + number);
+                    boolean isValid = PhoneNumberHelper.isValid(number);
+                    Button buttonNo = (Button) dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    buttonNo.setEnabled(isValid);
+                }
+
+                return false;
+            }
+        });
+
+        return dialog;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // disable positive key initially (no number)
+        Button buttonNo = ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_POSITIVE);
+        buttonNo.setEnabled(false);
+
+    }
+
+    private void addPhoneNumberToDb(String aNumber, String name) {
+        if ( aNumber == null || aNumber.trim().equals("") ) {
+            throw new IllegalArgumentException("number not set");
+        }
+
+        if ( name == null || name.trim().equals("")) {
+            name = "<Not set>";
+        }
+
+        SQLiteDatabase db = AloneSQLiteHelper.getInstance(getContext()).getWritableDatabase();
+        PhoneNumber number = PhoneNumber.create( "manual", aNumber, name, DateTime.now());
+        number.insert(db);
+        myListener.numberAdded(number);
     }
 }
