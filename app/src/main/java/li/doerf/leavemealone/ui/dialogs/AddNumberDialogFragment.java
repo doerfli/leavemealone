@@ -93,7 +93,7 @@ public class AddNumberDialogFragment extends DialogFragment {
                     String number = ((EditText) v).getText().toString();
                     Log.d( LOGTAG, "validating number: " + number);
                     boolean isValid = PhoneNumberHelper.isValid(number);
-                    Button buttonNo = (Button) dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    Button buttonNo = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
                     buttonNo.setEnabled(isValid);
                 }
 
