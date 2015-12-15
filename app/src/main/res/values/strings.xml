@@ -24,4 +24,6 @@
     <string name="pref_summary_only_allow_contacts">Calls from numbers not in your contacts will always be blocked</string>
     <string name="number_invalid">Please enter valid number</string>
     <string name="action_delete">Delete</string>
+    <string name="number_added">Number added</string>
+    <string name="numbers_deleted">Number(s) deleted</string>
 </resources>

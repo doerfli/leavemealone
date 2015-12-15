@@ -2,6 +2,7 @@ package li.doerf.leavemealone.ui.fragments;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,7 +26,7 @@ import li.doerf.leavemealone.ui.adapters.MultiSelector;
  *
  * Created by moo on 23/11/15.
  */
-public class BockedNumbersListFragment extends Fragment implements MultiSelector.SelectableModeListener {
+public class BockedNumbersListFragment extends Fragment implements MultiSelector.SelectableModeListener, BlockedNumbersAdapter.AdapterModelChangedListener {
     private final String LOGTAG = getClass().getSimpleName();
     private RecyclerView myBlockedNumbersList;
     private BlockedNumbersAdapter myBlockedNumbersAdapter;
@@ -41,7 +42,7 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         myReadbableDb = AloneSQLiteHelper.getInstance(getContext()).getReadableDatabase();
-        myBlockedNumbersAdapter = new BlockedNumbersAdapter( getContext(), null, this);
+        myBlockedNumbersAdapter = new BlockedNumbersAdapter( getContext(), null, this, this);
     }
 
     @Override
@@ -105,5 +106,17 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
     public void selectableModeChanged(boolean aState) {
         myShowListMultiselectModeMenu = aState;
         getActivity().supportInvalidateOptionsMenu();
+    }
+
+    @Override
+    public void itemsAdded() {
+        refreshList();
+        Snackbar.make( getView(), getString( R.string.number_added), Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void itemsDeleted() {
+        myBlockedNumbersAdapter.swapCursor(PhoneNumber.listAll(myReadbableDb));
+        Snackbar.make( getView(), getString(R.string.numbers_deleted), Snackbar.LENGTH_LONG).show();
     }
 }

@@ -24,10 +24,12 @@ import li.doerf.leavemealone.db.tables.PhoneNumber;
 public class BlockedNumbersAdapter extends RecyclerViewCursorAdapter<RecyclerViewHolder> {
     private final String LOGTAG = getClass().getSimpleName();
     private final MultiSelector myMultiSelector;
+    private final AdapterModelChangedListener myItemsChangedListener;
 
-    public BlockedNumbersAdapter(Context aContext, Cursor aCursor, MultiSelector.SelectableModeListener aFragmentShowing) {
+    public BlockedNumbersAdapter(Context aContext, Cursor aCursor, MultiSelector.SelectableModeListener aFragmentShowing, AdapterModelChangedListener anItemsChangesListener) {
         super( aContext, aCursor);
         myMultiSelector = new MultiSelector( this, aFragmentShowing);
+        myItemsChangedListener = anItemsChangesListener;
     }
 
     @Override
@@ -105,7 +107,12 @@ public class BlockedNumbersAdapter extends RecyclerViewCursorAdapter<RecyclerVie
             num.delete(db);
         }
 
-        swapCursor(PhoneNumber.listAll(db));
+        notifyDataSetChanged();
+        myItemsChangedListener.itemsDeleted();
+    }
 
+    public interface AdapterModelChangedListener {
+        void itemsAdded();
+        void itemsDeleted();
     }
 }

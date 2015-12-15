@@ -162,6 +162,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void numberAdded(PhoneNumber aNumber) {
         Log.d(LOGTAG, "refreshing list");
-        myBockedNumbersFragment.refreshList();
+        myBockedNumbersFragment.itemsAdded();
     }
 }
