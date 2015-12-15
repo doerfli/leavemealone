@@ -20,6 +20,7 @@ import android.widget.Switch;
 
 import li.doerf.leavemealone.R;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
+import li.doerf.leavemealone.services.KtippBlocklistRetrievalService;
 import li.doerf.leavemealone.ui.dialogs.AddNumberDialogFragment;
 import li.doerf.leavemealone.ui.fragments.BockedNumbersListFragment;
 import li.doerf.leavemealone.util.NotificationHelper;
@@ -115,6 +116,12 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             Intent i = new Intent( getBaseContext(), SettingsActivity.class);
             startActivity(i);
+            return true;
+        }
+
+        if ( id == R.id.action_sync) {
+            Intent i = new Intent( getBaseContext(), KtippBlocklistRetrievalService.class);
+            startService( i);
             return true;
         }
 
