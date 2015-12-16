@@ -26,4 +26,6 @@
     <string name="action_delete">Delete</string>
     <string name="number_added">Number added</string>
     <string name="numbers_deleted">Number(s) deleted</string>
+    <string name="call_blocker_enabled">Call blocker enabled</string>
+    <string name="call_blocker_disabled">Call blocker disabled</string>
 </resources>
