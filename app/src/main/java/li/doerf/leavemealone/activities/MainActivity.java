@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -91,16 +92,17 @@ public class MainActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main, menu);
 
         myMasterSwitch = (Switch) menu.findItem(R.id.action_switch).getActionView().findViewById(R.id.master_switch);
+
+        boolean masterSwitchEnabled = isMasterSwitchEnabled();
+        Log.d(LOGTAG, "setting master switch: " + masterSwitchEnabled);
+        myMasterSwitch.setChecked(masterSwitchEnabled);
+
         myMasterSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 toggleMasterSwitch(isChecked);
             }
         });
-
-        boolean masterSwitchEnabled = isMasterSwitchEnabled();
-        Log.d(LOGTAG, "setting master switch: " + masterSwitchEnabled);
-        myMasterSwitch.setChecked(masterSwitchEnabled);
 
         return true;
     }
@@ -156,10 +158,13 @@ public class MainActivity extends AppCompatActivity
     private void toggleMasterSwitch(boolean isChecked) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean( getString(R.string.pref_key_master_switch), isChecked);
+        editor.putBoolean(getString(R.string.pref_key_master_switch), isChecked);
         editor.commit();
         Log.i(LOGTAG, "app master switch: " + isChecked);
-        NotificationHelper.setNotificationOnlyFromContacts( getBaseContext());
+
+        NotificationHelper.setNotificationOnlyFromContacts(getBaseContext());
+        String snackText = isChecked ? getString( R.string.call_blocker_enabled) : getString(R.string.call_blocker_disabled);
+        Snackbar.make( this.findViewById( android.R.id.content), snackText, Snackbar.LENGTH_LONG).show();
     }
 
     private boolean isMasterSwitchEnabled() {
