@@ -98,8 +98,7 @@ public class BlockedNumbersAdapter extends RecyclerViewCursorAdapter<RecyclerVie
             numbersToDelete.add(n);
         }
 
-        myMultiSelector.setSelectable(false);
-        myMultiSelector.resetCheckedItems();
+        resetSelectedItems();
 
         SQLiteDatabase db = AloneSQLiteHelper.getInstance( getContext()).getWritableDatabase();
         for ( PhoneNumber num : numbersToDelete ) {
@@ -107,8 +106,14 @@ public class BlockedNumbersAdapter extends RecyclerViewCursorAdapter<RecyclerVie
             num.delete(db);
         }
 
-        notifyDataSetChanged();
         myItemsChangedListener.itemsDeleted();
+    }
+
+    public void resetSelectedItems() {
+        Log.d(LOGTAG, "resetting selected items");
+        myMultiSelector.setSelectable(false);
+        myMultiSelector.resetCheckedItems();
+        notifyDataSetChanged();
     }
 
     public interface AdapterModelChangedListener {
