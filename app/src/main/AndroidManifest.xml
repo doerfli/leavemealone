@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="li.doerf.leavemealone">
+
     <!-- get notified when phone rings -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!-- change call state (hang up call) -->
@@ -23,12 +24,17 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.SettingsActivity"
             android:parentActivityName=".activities.MainActivity" />
+        <activity
+            android:name=".activities.AboutActivity"
+            android:parentActivityName=".activities.MainActivity" >
+        </activity>
 
         <receiver android:name=".telephony.IncomingCallReceiver">
             <intent-filter>
@@ -40,5 +46,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
     </application>
+
 </manifest>

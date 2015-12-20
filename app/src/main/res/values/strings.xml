@@ -28,4 +28,12 @@
     <string name="numbers_deleted">Number(s) deleted</string>
     <string name="call_blocker_enabled">Call blocker enabled</string>
     <string name="call_blocker_disabled">Call blocker disabled</string>
+    <string name="action_acount">About</string>
+    <string name="about_title">License</string>
+    <string name="copyright_notice"><![CDATA[Copyright 2015 Marc Doerflinger <leavemealone@bytes.li> and Patrick Ammann <>]]></string>
+    <string name="license_text">Apache License, Version 2.0, January 2004</string>
+    <string name="license_details">License details: https://github.com/doerfli/leavemealone/blob/master/LICENSE.txt</string>
+    <string name="contat_title">Contact</string>
+    <string name="contact_text">If you have any questions, please contact us at\nleavemealone@bytes.li</string>
+    <string name="support_donation_text">You can support us by making a donation at\nhttps://www.paypal.me/MarcDoerflinger</string>
 </resources>
