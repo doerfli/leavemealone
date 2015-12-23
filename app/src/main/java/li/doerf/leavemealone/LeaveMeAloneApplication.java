@@ -31,8 +31,8 @@ public class LeaveMeAloneApplication extends Application {
         // TODO set correct intervals
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                1000,
-                10000,
+                0,
+                24 * 60 * 60 * 1000, // once a day
                 ktipsync);
     }
 
