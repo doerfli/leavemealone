@@ -44,6 +44,8 @@ public class KtippBlocklistRetrievalService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(LOGTAG, "onStartCommand - startId: " + startId);
 
+        // TODO use AsyncTask instead of Runnable
+        // http://developer.android.com/reference/android/os/AsyncTask.html
         Runnable r = new Runnable() {
             public void run() {
                 try {
@@ -67,7 +69,7 @@ public class KtippBlocklistRetrievalService extends Service {
 
                     // TODO: add into DB
 
-
+                    // TODO update ui when sync complete
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
