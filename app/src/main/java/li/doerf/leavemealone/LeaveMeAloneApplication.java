@@ -25,15 +25,15 @@ public class LeaveMeAloneApplication extends Application {
 
         // TODO start this only when required (settings) and with configurable intervals.
         // TODO make sure its restarted after bootup
-        Intent i = new Intent( getApplicationContext(), KtippBlocklistRetrievalService.class);
-        PendingIntent ktipsync = PendingIntent.getService( getApplicationContext(), 0, i, 0);
+//        Intent i = new Intent( getApplicationContext(), KtippBlocklistRetrievalService.class);
+//        PendingIntent ktipsync = PendingIntent.getService( getApplicationContext(), 0, i, 0);
 
         // TODO set correct intervals
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                0,
-                24 * 60 * 60 * 1000, // once a day
-                ktipsync);
+//        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+//        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+//                0,
+//                24 * 60 * 60 * 1000, // once a day
+//                ktipsync);
     }
 
     @Override

@@ -22,6 +22,12 @@
     <string name="pref_key_only_allow_contacts">OnlyAllowContacts</string>
     <string name="pref_title_only_allow_contacts">Only allow contacts</string>
     <string name="pref_summary_only_allow_contacts">Calls from numbers not in your contacts will always be blocked</string>
+    <string name="pref_key_sync_enable">EnableSync</string>
+    <string name="pref_title_sync_enable">Enable synchronization</string>
+    <string name="pref_summary_sync_enable">Content of the K-Tipp block list will automatically be downloaded in a certain interval</string>
+    <string name="pref_key_sync_interval">SyncInterval</string>
+    <string name="pref_title_sync_intervale">Synchronization interval</string>
+    <string name="pref_summary_sync_interval">How often will the list of blocked numbers be downloaded from K-Tipp. </string>
     <string name="number_invalid">Please enter valid number</string>
     <string name="action_delete">Delete</string>
     <string name="number_added">Number added</string>
@@ -37,4 +43,7 @@
     <string name="contat_title">Contact</string>
     <string name="contact_text">If you have any questions, please contact us at\nleavemealone@bytes.li</string>
     <string name="support_donation_text">You can support us by making a donation at\nhttps://www.paypal.me/MarcDoerflinger</string>
+    <string name="pref_title_syncronization">Synchronization</string>
+    <string name="pref_title_dialog_interval">How often should the K-Tipp list be synchronized</string>
+    <string name="pref_sync_interval_default">onceaday</string>
 </resources>
