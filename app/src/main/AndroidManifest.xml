@@ -31,6 +31,10 @@
         <activity
             android:name=".activities.SettingsActivity"
             android:parentActivityName=".activities.MainActivity" />
+        <activity
+            android:name=".activities.AboutActivity"
+            android:parentActivityName=".activities.MainActivity" >
+        </activity>
 
         <receiver android:name=".telephony.IncomingCallReceiver">
             <intent-filter>

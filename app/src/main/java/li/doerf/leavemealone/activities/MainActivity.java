@@ -21,7 +21,6 @@ import android.widget.Switch;
 
 import li.doerf.leavemealone.R;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
-import li.doerf.leavemealone.services.KtippBlocklistRetrievalService;
 import li.doerf.leavemealone.ui.dialogs.AddNumberDialogFragment;
 import li.doerf.leavemealone.ui.fragments.BockedNumbersListFragment;
 import li.doerf.leavemealone.util.NotificationHelper;
@@ -78,6 +77,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+        myBockedNumbersFragment.backButtonPressed();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -117,6 +117,12 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent i = new Intent( getBaseContext(), SettingsActivity.class);
+            startActivity(i);
+            return true;
+        }
+
+        if ( id == R.id.action_about ) {
+            Intent i = new Intent( getBaseContext(), AboutActivity.class);
             startActivity(i);
             return true;
         }

@@ -61,6 +61,7 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         if (myShowListMultiselectModeMenu) {
+            getFragmentManager().beginTransaction().addToBackStack("multiselect").commit();
             menu.clear();
             inflater.inflate(R.menu.list_multiselect, menu);
         } else {
@@ -111,12 +112,21 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
     @Override
     public void itemsAdded() {
         refreshList();
-        Snackbar.make( getView(), getString( R.string.number_added), Snackbar.LENGTH_LONG).show();
+        Snackbar.make(getView(), getString(R.string.number_added), Snackbar.LENGTH_LONG).show();
     }
 
     @Override
     public void itemsDeleted() {
         myBlockedNumbersAdapter.swapCursor(PhoneNumber.listAll(myReadbableDb));
         Snackbar.make( getView(), getString(R.string.numbers_deleted), Snackbar.LENGTH_LONG).show();
+    }
+
+    public void backButtonPressed() {
+        Log.d( LOGTAG, "got backButtonPressed");
+        if ( myShowListMultiselectModeMenu ) {
+            myShowListMultiselectModeMenu = false;
+        }
+        getActivity().supportInvalidateOptionsMenu();
+        myBlockedNumbersAdapter.resetSelectedItems();
     }
 }
