@@ -41,7 +41,7 @@
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receiver.CheckForNotificationAtBootReceiver">
+        <receiver android:name=".receiver.BootupCompleteReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
