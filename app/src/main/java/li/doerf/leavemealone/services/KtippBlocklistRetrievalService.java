@@ -41,7 +41,7 @@ public class KtippBlocklistRetrievalService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(Intent intent, int flags, final int startId) {
         Log.d(LOGTAG, "onStartCommand - startId: " + startId);
 
         // TODO use AsyncTask instead of Runnable
@@ -73,7 +73,7 @@ public class KtippBlocklistRetrievalService extends Service {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                stopSelf();
+                stopSelf( startId);
             }
         };
 
