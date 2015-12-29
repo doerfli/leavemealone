@@ -3,7 +3,7 @@ package li.doerf.leavemealone.services;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
+//import android.support.annotation.Nullable; // does not compile for me
 import android.util.Log;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -33,7 +33,7 @@ import java.util.zip.InflaterInputStream;
 public class KtippBlocklistRetrievalService extends Service {
     private final String LOGTAG = getClass().getSimpleName();
 
-    @Nullable
+    //@Nullable
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(LOGTAG, "onBind");
@@ -206,8 +206,9 @@ public class KtippBlocklistRetrievalService extends Service {
             String base = a0.substring(0, a0.length()-2);
             //Log.d(LOGTAG, "base: " + base);
             for (int i = 1; i < arr.length; i++) {
-                String ax = extractNumber(base + arr[i]);
+                String ax = extractNumber(arr[i]);
                 if (ax != "") {
+                    ax = extractNumber(base + ax);
                     //Log.d(LOGTAG, "ax: " + ax);
                     ret.add(ax);
                 }
