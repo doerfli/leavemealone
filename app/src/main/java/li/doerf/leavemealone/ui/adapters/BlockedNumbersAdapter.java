@@ -59,7 +59,7 @@ public class BlockedNumbersAdapter extends RecyclerViewCursorAdapter<RecyclerVie
         nameView.setText( number.getName());
 
         TextView sourceView = (TextView) cardView.findViewById(R.id.source);
-        sourceView.setText( number.getSource());
+        sourceView.setText( number.getSource().getName());
 
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override

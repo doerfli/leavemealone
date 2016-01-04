@@ -20,6 +20,7 @@ import org.joda.time.DateTime;
 import li.doerf.leavemealone.R;
 import li.doerf.leavemealone.db.AloneSQLiteHelper;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
+import li.doerf.leavemealone.db.tables.PhoneNumberSource;
 import li.doerf.leavemealone.util.PhoneNumberHelper;
 
 /**
@@ -124,7 +125,8 @@ public class AddNumberDialogFragment extends DialogFragment {
         }
 
         SQLiteDatabase db = AloneSQLiteHelper.getInstance(getContext()).getWritableDatabase();
-        PhoneNumber number = PhoneNumber.create( "manual", aNumber, name, DateTime.now());
+        PhoneNumberSource source = PhoneNumberSource.update(db, "manual");
+        PhoneNumber number = PhoneNumber.create(source, aNumber, name, DateTime.now());
         number.insert(db);
         myListener.numberAdded(number);
     }

@@ -1,10 +1,14 @@
 package li.doerf.leavemealone.services;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.IBinder;
 //import android.support.annotation.Nullable; // does not compile for me
 import android.util.Log;
+
+import org.joda.time.DateTime;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -27,8 +31,12 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
+import li.doerf.leavemealone.db.AloneSQLiteHelper;
+import li.doerf.leavemealone.db.tables.PhoneNumber;
+import li.doerf.leavemealone.db.tables.PhoneNumberSource;
+
 /**
- * Created by moo on 15/12/15.
+ * Created by pamapa on 15/12/15.
  */
 public class KtippBlocklistRetrievalService extends Service {
     private final String LOGTAG = getClass().getSimpleName();
@@ -43,6 +51,7 @@ public class KtippBlocklistRetrievalService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, final int startId) {
         Log.d(LOGTAG, "onStartCommand - startId: " + startId);
+        final Context context = this;
 
         // TODO use AsyncTask instead of Runnable
         // http://developer.android.com/reference/android/os/AsyncTask.html
@@ -53,13 +62,13 @@ public class KtippBlocklistRetrievalService extends Service {
                     String sourceDate = extractSubString(content, "Letzte Aktualisierung:", "<");
                     Log.d(LOGTAG, "source date: " + sourceDate);
                     // TODO remember sourceDate and if already processed do not again
-/*
+    /*
                     if (lastSourceDate.equals(sourceDate)) {
                         // we already have this version
                         Log.d(LOGTAG, "We already have this version");
                         return;
                     }
-*/
+    */
                     List<Map<String,String>> result = parsePages(content);
                     //Log.d(LOGTAG, "raw result: " + result);
 
@@ -67,7 +76,15 @@ public class KtippBlocklistRetrievalService extends Service {
                     Log.d(LOGTAG, "cleaned result size: " + result.size());
                     Log.d(LOGTAG, "cleaned result: " + result);
 
-                    // TODO: add into DB
+                    // db: insert new entries
+                    SQLiteDatabase db = AloneSQLiteHelper.getInstance(context).getWritableDatabase();
+                    PhoneNumberSource source = PhoneNumberSource.update(db, "_ktipp");
+                    DateTime now = DateTime.now(); // must be same for all
+                    for (Map<String,String> map : result) {
+                        PhoneNumber.update(db, source, map.get("number"), map.get("name"), now).insert(db);
+                    }
+                    // db: remove old entries
+                    PhoneNumber.deleteOldEntries(db, source, now);
 
                     // TODO update ui when sync complete
                 } catch (IOException e) {
@@ -82,7 +99,7 @@ public class KtippBlocklistRetrievalService extends Service {
         return START_STICKY;
     }
 
-    private List<Map<String,String>> cleanupEntries(List<Map<String,String>>  in) {
+    private List<Map<String,String>> cleanupEntries(List<Map<String,String>> in) {
         ArrayList<Map<String,String>> uniq = new ArrayList<Map<String,String>>();
         Set<String> seen = new HashSet<>();
         for (Map<String,String> map : in) {
@@ -137,12 +154,12 @@ public class KtippBlocklistRetrievalService extends Service {
         ret.addAll(parsePage(doc));
 
         // handle remaining pages
-        for (int p = 1; p <= lastPage; p++) {
+        /*for (int p = 1; p <= lastPage; p++) {
             content = fetchPage(p);
             doc = Jsoup.parse(content);
             content = null;
             ret.addAll(parsePage(doc));
-        }
+        }*/
 
         return ret;
     }
@@ -175,7 +192,7 @@ public class KtippBlocklistRetrievalService extends Service {
         else return s.substring(0, 200 - 3) + "...";
     }
 
-    private List<String> extractNumbers(String str) {
+    private List<String> extractNumbers(final String str) {
         ArrayList<String> ret = new ArrayList<String>();
         //Log.d(LOGTAG, "extractNumbers: " + str);
         String[] arr = str.split("und|oder|sowie|auch|,|;");
@@ -195,7 +212,7 @@ public class KtippBlocklistRetrievalService extends Service {
     }
 
     // 021 558 73 91/92/93/94/95
-    private List<String> extractSlashedNumbers(String str) {
+    private List<String> extractSlashedNumbers(final String str) {
         //Log.d(LOGTAG, "extractSlashedNumbers: " + str);
         ArrayList<String> ret = new ArrayList<String>();
         String[] arr = str.split("/");
@@ -218,7 +235,7 @@ public class KtippBlocklistRetrievalService extends Service {
     }
 
     // 044 400 00 00 bis 044 400 00 19
-    private List<String> extractRangeNumbers(String str) {
+    private List<String> extractRangeNumbers(final String str) {
         //Log.d(LOGTAG, "extractRangeNumbers: " + str);
         ArrayList<String> ret = new ArrayList<String>();
         String[] arr = str.split("bis");
@@ -241,7 +258,7 @@ public class KtippBlocklistRetrievalService extends Service {
         return str;
     }
 
-    private String fetchPage(int page_nr) throws IOException {
+    private String fetchPage(final int page_nr) throws IOException {
         StringBuffer ret = new StringBuffer();
         try {
             URL url = new URL("https://www.ktipp.ch/service/warnlisten/detail/?warnliste_id=7&ajax=ajax-search-form&page="+Integer.toString(page_nr));
@@ -277,7 +294,7 @@ public class KtippBlocklistRetrievalService extends Service {
         return ret.toString();
     }
 
-    private String extractSubString(String sb, String strStart, String strEnd) throws IOException {
+    private String extractSubString(final String sb, final String strStart, final String strEnd) throws IOException {
         int s = sb.indexOf(strStart);
         if (s == -1) throw new IOException("extractSubString: strStart (" + strStart + ") not found.)");
         s += strStart.length();
