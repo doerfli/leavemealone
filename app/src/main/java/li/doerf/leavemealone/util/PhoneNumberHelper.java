@@ -60,16 +60,14 @@ public class PhoneNumberHelper {
      */
     private static String getCurrentCountryIso(Context context, Locale locale) {
         String countryIso = "CH";
-        // TODO
         /*
-        CountryDetector detector = (CountryDetector) context.getSystemService(
+        final CountryDetector detector = (CountryDetector) context.getSystemService(
                 Context.COUNTRY_DETECTOR);
         if (detector != null) {
-            countryIso = detector.detectCountry().getCountryIso();
-        } else {
-            countryIso = locale.getCountry();
-            Log.w(TAG, "No CountryDetector; falling back to countryIso based on locale: "
-                    + countryIso);
+            final Country country = detector.detectCountry();
+            if (country != null) {
+                countryIso = country.getCountryIso();
+            }
         }
         */
         return countryIso;
