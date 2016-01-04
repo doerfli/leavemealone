@@ -87,6 +87,8 @@ public class KtippBlocklistRetrievalService extends Service {
                     PhoneNumberSource source = PhoneNumberSource.update(db, "_ktipp");
                     DateTime now = DateTime.now(); // must be same for all
                     for (Map<String,String> map : result) {
+                        // TODO insert/update is very slow when done repeately. Implement a insert method that takes a list of elements to insert
+                        // and use beginTransaction/endTransaction around the insert, then all insert should be done in one batch which is said to be faster.
                         PhoneNumber.update(db, source, map.get("number"), map.get("name"), now);
                     }
                     // db: remove old entries
