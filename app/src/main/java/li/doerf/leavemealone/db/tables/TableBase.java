@@ -43,7 +43,6 @@ abstract class TableBase  {
         boolean firstColumn = true;
 
         for (Map.Entry<String,Field> entry : getColumnNamesWithFields().entrySet()) {
-//            String columnName = entry.getKey();
             Field field = entry.getValue();
 
             Column fieldEntityAnnotation = getColumn(field);
@@ -57,17 +56,17 @@ abstract class TableBase  {
 
                 if ( fieldEntityAnnotation.isReference() )
                 {
-                    sql.append( "INTEGER");
+                    sql.append("INTEGER");
                 }
                 else {
                     sql.append(fieldEntityAnnotation.type());
                 }
 
                 if ( fieldEntityAnnotation.isPrimaryKey() )
-                    sql.append( " PRIMARY KEY");
+                    sql.append(" PRIMARY KEY");
 
                 if ( fieldEntityAnnotation.isAutoincrement())
-                    sql.append( " AUTOINCREMENT");
+                    sql.append(" AUTOINCREMENT");
             }
 
             firstColumn = false;
@@ -146,29 +145,25 @@ abstract class TableBase  {
     private String getColumnName(Field aField)
     {
         Column fieldEntityAnnotation = getColumn(aField);
-
         if (fieldEntityAnnotation == null) {
             return null;
         }
-
         return fieldEntityAnnotation.name();
     }
 
-    private ContentValues getFilledContentValues()
-            throws IllegalAccessException {
+    private ContentValues getFilledContentValues() throws IllegalAccessException {
         ContentValues contentValues = new ContentValues();
-
         for (Field field : getClass().getDeclaredFields()) {
-            if (isColumn( field)) {
-                if ( ! isAutoIncrement(field) ) {
+            if (isColumn(field)) {
+                if (!isAutoIncrement(field)) {
                     putInContentValues(contentValues, field, this);
                 }
             }
         }
-
         return contentValues;
     }
 
+    // DB -> Object
     protected void fillFromCursor(SQLiteDatabase db, Cursor aCursor, Map<String, Field> aColumnNamesAndFields) {
         try {
             for (Map.Entry<String, Field> e : aColumnNamesAndFields.entrySet()) {
@@ -177,9 +172,11 @@ abstract class TableBase  {
                 field.setAccessible( true);
                 Class<?> type = field.getType();
 
-                // TODO: add DateTime
                 if (String.class.isAssignableFrom(type)) {
                     String value = aCursor.getString(aCursor.getColumnIndex(columnName));
+                    field.set(this, value);
+                } else if (Short.class.isAssignableFrom(type)) {
+                    Short value = aCursor.getShort(aCursor.getColumnIndex(columnName));
                     field.set(this, value);
                 } else if (Integer.class.isAssignableFrom(type)) {
                     Integer value = aCursor.getInt(aCursor.getColumnIndex(columnName));
@@ -192,9 +189,6 @@ abstract class TableBase  {
                     field.set(this, value);
                 } else if (Double.class.isAssignableFrom(type)) {
                     Double value = aCursor.getDouble(aCursor.getColumnIndex(columnName));
-                    field.set(this, value);
-                } else if (Short.class.isAssignableFrom(type)) {
-                    Short value = aCursor.getShort(aCursor.getColumnIndex(columnName));
                     field.set(this, value);
                 }
                 else
@@ -215,7 +209,8 @@ abstract class TableBase  {
         }
     }
 
-    protected void putInContentValues(ContentValues contentValues, Field field,
+    // Object -> DB
+    private void putInContentValues(ContentValues contentValues, Field field,
                                       Object object) throws IllegalAccessException {
         if (!field.isAccessible())
             field.setAccessible(true); // for private variables
@@ -227,16 +222,17 @@ abstract class TableBase  {
         }
 
         String key = getColumnName(field);
-        if (fieldValue instanceof Long) {
-            contentValues.put(key, Long.valueOf(fieldValue.toString()));
-        } else if (fieldValue instanceof String) {
+
+        if (fieldValue instanceof String) {
             contentValues.put(key, (String) fieldValue);
+        } else if (fieldValue instanceof Short) {
+            contentValues.put(key, (Short) fieldValue);
+        } else if (fieldValue instanceof Long) {
+            contentValues.put(key, (Long) fieldValue);
         } else if (fieldValue instanceof Integer) {
             contentValues.put(key, (Integer) fieldValue);
         } else if (fieldValue instanceof Float) {
             contentValues.put(key, (Float) fieldValue);
-        } else if (fieldValue instanceof Short) {
-            contentValues.put(key, (Short) fieldValue);
         } else if (fieldValue instanceof Double) {
             contentValues.put(key, (Double) fieldValue);
         } else {
