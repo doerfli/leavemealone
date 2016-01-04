@@ -9,6 +9,7 @@ import org.joda.time.DateTime;
 
 import li.doerf.leavemealone.db.tables.PhoneNumber;
 import li.doerf.leavemealone.db.tables.PhoneNumberSource;
+import li.doerf.leavemealone.db.tables.Property;
 
 /**
  * Created by moo on 29/01/15.
@@ -35,6 +36,7 @@ public class AloneSQLiteHelper extends SQLiteOpenHelper {
         Log.i(LOGTAG, "Initializing Database: " + DATABASE_NAME);
         new PhoneNumber().createTable(db);
         new PhoneNumberSource().createTable(db);
+        new Property().createTable(db);
     }
 
     @Override
@@ -42,6 +44,7 @@ public class AloneSQLiteHelper extends SQLiteOpenHelper {
         Log.w(LOGTAG, "Dropping database: " + DATABASE_NAME);
         new PhoneNumber().dropTable(db);
         new PhoneNumberSource().dropTable(db);
+        new Property().dropTable(db);
         onCreate(db);
     }
 }
