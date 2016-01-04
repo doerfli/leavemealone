@@ -154,12 +154,12 @@ public class KtippBlocklistRetrievalService extends Service {
         ret.addAll(parsePage(doc));
 
         // handle remaining pages
-        /*for (int p = 1; p <= lastPage; p++) {
+        for (int p = 1; p <= lastPage; p++) {
             content = fetchPage(p);
             doc = Jsoup.parse(content);
             content = null;
             ret.addAll(parsePage(doc));
-        }*/
+        }
 
         return ret;
     }
