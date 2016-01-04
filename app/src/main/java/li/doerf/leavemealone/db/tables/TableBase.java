@@ -151,6 +151,7 @@ abstract class TableBase  {
         return fieldEntityAnnotation.name();
     }
 
+    // Object -> DB
     private ContentValues getFilledContentValues() throws IllegalAccessException {
         ContentValues contentValues = new ContentValues();
         for (Field field : getClass().getDeclaredFields()) {
@@ -161,6 +162,42 @@ abstract class TableBase  {
             }
         }
         return contentValues;
+    }
+
+    private void putInContentValues(ContentValues contentValues, Field field,
+                                    Object object) throws IllegalAccessException {
+        if (!field.isAccessible())
+            field.setAccessible(true); // for private variables
+        Object fieldValue = field.get(object);
+
+        if (fieldValue == null) {
+            Log.v(LOGTAG, "fieldValue null. ignoring: " + field);
+            return;
+        }
+
+        String key = getColumnName(field);
+
+        if (fieldValue instanceof String) {
+            contentValues.put(key, (String) fieldValue);
+        } else if (fieldValue instanceof Short) {
+            contentValues.put(key, (Short) fieldValue);
+        } else if (fieldValue instanceof Long) {
+            contentValues.put(key, (Long) fieldValue);
+        } else if (fieldValue instanceof Integer) {
+            contentValues.put(key, (Integer) fieldValue);
+        } else if (fieldValue instanceof Float) {
+            contentValues.put(key, (Float) fieldValue);
+        } else if (fieldValue instanceof Double) {
+            contentValues.put(key, (Double) fieldValue);
+        } else {
+            Column column = getColumn(field);
+            if (column.isReference()) {
+                contentValues.put(key, ((TableBase) fieldValue).getId());
+            } else {
+                // Byte, Byte[] and Boolean are currently not supported
+                Log.w(LOGTAG, "Ignoring field - unsupported datatype: " + field);
+            }
+        }
     }
 
     // DB -> Object
@@ -206,43 +243,6 @@ abstract class TableBase  {
             }
         } catch (IllegalAccessException e) {
             Log.e("PantryItem", "caught IllegalAccessException. could not insert data", e);
-        }
-    }
-
-    // Object -> DB
-    private void putInContentValues(ContentValues contentValues, Field field,
-                                      Object object) throws IllegalAccessException {
-        if (!field.isAccessible())
-            field.setAccessible(true); // for private variables
-        Object fieldValue = field.get(object);
-
-        if (fieldValue == null) {
-            Log.v(LOGTAG, "fieldValue null. ignoring: " + field);
-            return;
-        }
-
-        String key = getColumnName(field);
-
-        if (fieldValue instanceof String) {
-            contentValues.put(key, (String) fieldValue);
-        } else if (fieldValue instanceof Short) {
-            contentValues.put(key, (Short) fieldValue);
-        } else if (fieldValue instanceof Long) {
-            contentValues.put(key, (Long) fieldValue);
-        } else if (fieldValue instanceof Integer) {
-            contentValues.put(key, (Integer) fieldValue);
-        } else if (fieldValue instanceof Float) {
-            contentValues.put(key, (Float) fieldValue);
-        } else if (fieldValue instanceof Double) {
-            contentValues.put(key, (Double) fieldValue);
-        } else {
-            Column column = getColumn(field);
-            if (column.isReference()) {
-                contentValues.put(key, ((TableBase) fieldValue).getId());
-            } else {
-                // Byte, Byte[] and Boolean are currently not supported
-                Log.w(LOGTAG, "Ignoring field - unsupported datatype: " + field);
-            }
         }
     }
 
