@@ -109,6 +109,8 @@ public class KtippBlocklistRetrievalService extends Service {
         ArrayList<Map<String,String>> uniq = new ArrayList<Map<String,String>>();
         Set<String> seen = new HashSet<>();
         for (Map<String,String> map : in) {
+            // TODO use PhoneNumberHelper.normalize to clean up number
+            // TODO remove entries with only 0
             String n = map.get("number");
 
             // make international format
