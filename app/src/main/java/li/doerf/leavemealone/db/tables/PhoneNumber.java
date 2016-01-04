@@ -26,8 +26,8 @@ public class PhoneNumber extends TableBase {
     private String number;
     @Column(name = "name", type = "TEXT")
     private String name;
-    @Column(name = "last_modified", type = "INTEGER")
-    private Long lastModified;
+    @Column(name = "date_modified", type = "INTEGER")
+    private Long dateModified;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -53,19 +53,19 @@ public class PhoneNumber extends TableBase {
         this.name = name;
     }
 
-    public Long getLastModified() {
-        return lastModified;
+    public Long getDateModified() {
+        return dateModified;
     }
-    public void setLastModified(Long lastModified) {
-        this.lastModified = lastModified;
+    public void setDateModified(Long lastModified) {
+        this.dateModified = lastModified;
     }
 
-    public static PhoneNumber create(PhoneNumberSource aSource, String aNumber, String aName, DateTime aLastModified) {
+    public static PhoneNumber create(PhoneNumberSource aSource, String aNumber, String aName, DateTime aDateModified) {
         PhoneNumber number = new PhoneNumber();
         number.setSource(aSource);
         number.setNumber(aNumber);
         number.setName(aName);
-        number.setLastModified(aLastModified != null ? aLastModified.getMillis() : null);
+        number.setDateModified(aDateModified != null ? aDateModified.getMillis() : null);
         return number;
     }
 
@@ -76,13 +76,13 @@ public class PhoneNumber extends TableBase {
         return item;
     }
 
-    public static PhoneNumber update(SQLiteDatabase db, PhoneNumberSource aSource, String aNumber, String aName, DateTime aLastModified) {
+    public static PhoneNumber update(SQLiteDatabase db, PhoneNumberSource aSource, String aNumber, String aName, DateTime aDateModified) {
         PhoneNumber item = PhoneNumber.findBySourceAndNumber(db, aSource, aNumber);
         // TODO: more efficient via db update?
         if (item != null) {
             item.delete(db);
         }
-        item = PhoneNumber.create(aSource, aNumber, aName, aLastModified);
+        item = PhoneNumber.create(aSource, aNumber, aName, aDateModified);
         item.insert(db);
         return item;
     }
@@ -91,7 +91,7 @@ public class PhoneNumber extends TableBase {
         PhoneNumber item = new PhoneNumber();
         db.delete(
                 item.getTableName(),
-                "source = ? AND last_modified != ?",
+                "source = ? AND date_modified != ?",
                 new String[]{aSource.getId().toString(), Long.toString(aNow.getMillis())});
     }
 
@@ -146,7 +146,7 @@ public class PhoneNumber extends TableBase {
     private static Map<Long, PhoneNumberSource> cache = new HashMap<Long, PhoneNumberSource>();
 
     @Override
-    protected TableBase getReferredObject(SQLiteDatabase db, String aReferenceName, Long anId) {
+    protected TableBase getReference(SQLiteDatabase db, String aReferenceName, Long anId) {
         if ("source".equals(aReferenceName)) {
             PhoneNumberSource item = cache.get(anId);
             if (item != null) {

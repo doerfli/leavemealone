@@ -34,6 +34,7 @@ import java.util.zip.InflaterInputStream;
 import li.doerf.leavemealone.db.AloneSQLiteHelper;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
 import li.doerf.leavemealone.db.tables.PhoneNumberSource;
+import li.doerf.leavemealone.db.tables.Property;
 
 /**
  * Created by pamapa on 15/12/15.
@@ -59,25 +60,30 @@ public class KtippBlocklistRetrievalService extends Service {
             public void run() {
                 try {
                     String content = fetchPage(0);
+
                     String sourceDate = extractSubString(content, "Letzte Aktualisierung:", "<");
                     Log.d(LOGTAG, "source date: " + sourceDate);
-                    // TODO remember sourceDate and if already processed do not again
-    /*
-                    if (lastSourceDate.equals(sourceDate)) {
-                        // we already have this version
-                        Log.d(LOGTAG, "We already have this version");
-                        return;
+
+                    SQLiteDatabase db = AloneSQLiteHelper.getInstance(context).getReadableDatabase();
+                    Property item = Property.findByName(db, "ktipp_source_date");
+                    if (item != null) {
+                        if (item.getKey().equals(sourceDate)) {
+                            Log.d(LOGTAG, "We already have this version: " + sourceDate);
+                            stopSelf(startId);
+                            return;
+                        }
                     }
-    */
+
                     List<Map<String,String>> result = parsePages(content);
                     //Log.d(LOGTAG, "raw result: " + result);
 
                     result = cleanupEntries(result);
-                    Log.d(LOGTAG, "cleaned result size: " + result.size());
-                    Log.d(LOGTAG, "cleaned result: " + result);
+                    //Log.d(LOGTAG, "cleaned result size: " + result.size());
+                    //Log.d(LOGTAG, "cleaned result: " + result);
 
                     // db: insert new entries
-                    SQLiteDatabase db = AloneSQLiteHelper.getInstance(context).getWritableDatabase();
+                    db = AloneSQLiteHelper.getInstance(context).getWritableDatabase();
+                    Property.update(db, "ktipp_source_date", sourceDate);
                     PhoneNumberSource source = PhoneNumberSource.update(db, "_ktipp");
                     DateTime now = DateTime.now(); // must be same for all
                     for (Map<String,String> map : result) {
@@ -90,7 +96,7 @@ public class KtippBlocklistRetrievalService extends Service {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                stopSelf( startId);
+                stopSelf(startId);
             }
         };
 

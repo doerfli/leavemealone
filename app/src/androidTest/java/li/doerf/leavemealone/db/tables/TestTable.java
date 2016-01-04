@@ -31,7 +31,7 @@ public class TestTable extends TableBase {
     }
 
     @Override
-    protected TableBase getReferredObject(SQLiteDatabase db, String aReferenceName, Long anId) {
+    protected TableBase getReference(SQLiteDatabase db, String aReferenceName, Long anId) {
         return null;
     }
 }

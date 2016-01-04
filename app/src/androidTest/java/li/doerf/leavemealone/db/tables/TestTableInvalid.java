@@ -28,7 +28,7 @@ public class TestTableInvalid extends TableBase {
     public void setId(Long anId) { }
 
     @Override
-    protected TableBase getReferredObject(SQLiteDatabase db, String aReferenceName, Long anId) {
+    protected TableBase getReference(SQLiteDatabase db, String aReferenceName, Long anId) {
         return null;
     }
 }

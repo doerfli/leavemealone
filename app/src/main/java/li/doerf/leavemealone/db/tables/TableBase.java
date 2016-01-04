@@ -23,7 +23,7 @@ abstract class TableBase  {
 
     public abstract Long getId();
     public abstract void setId( Long anId);
-    protected abstract TableBase getReferredObject(SQLiteDatabase db, String aReferenceName, Long anId);
+    protected abstract TableBase getReference(SQLiteDatabase db, String aReferenceName, Long anId);
 
     protected String getTableName() {
         if ( tableName == null ) {
@@ -177,6 +177,7 @@ abstract class TableBase  {
                 field.setAccessible( true);
                 Class<?> type = field.getType();
 
+                // TODO: add DateTime
                 if (String.class.isAssignableFrom(type)) {
                     String value = aCursor.getString(aCursor.getColumnIndex(columnName));
                     field.set(this, value);
@@ -201,7 +202,7 @@ abstract class TableBase  {
                     Column column = getColumn(field);
                     if (column.isReference() && db != null) {
                         Long id = aCursor.getLong(aCursor.getColumnIndex(columnName));
-                        TableBase value = getReferredObject(db, columnName, id);
+                        TableBase value = getReference(db, columnName, id);
                         field.set(this, value);
                     } else {
                         // Byte, Byte[] and Boolean are currently not supported
