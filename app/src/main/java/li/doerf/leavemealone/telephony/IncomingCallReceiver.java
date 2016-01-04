@@ -38,9 +38,9 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String state = intent.getExtras().getString(TelephonyManager.EXTRA_STATE);
-        String incomingNumber = PhoneNumberHelper.normalize(intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER));
+        String incomingNumber = PhoneNumberHelper.normalize(context, intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER));
 
-        if ( myIsRingingFrom != null && myIsRingingFrom.equals( incomingNumber)) {
+        if (myIsRingingFrom != null && myIsRingingFrom.equals( incomingNumber)) {
             // already ringing
             return;
         }
@@ -50,13 +50,13 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                 + ". number: "
                 + incomingNumber);
 
-        if ( incomingNumber == null ) {
+        if (incomingNumber == null) {
             myIsRingingFrom = null;
             // nothing to see here
             return;
         }
 
-        if ( ! TelephonyManager.EXTRA_STATE_RINGING.equals( state) ) {
+        if (!TelephonyManager.EXTRA_STATE_RINGING.equals( state)) {
             myIsRingingFrom = null;
             // we are not interested if its not ringing
             return;
@@ -74,18 +74,18 @@ public class IncomingCallReceiver extends BroadcastReceiver {
      * @param incomingNumber the number to check
      */
     private void checkNumber(Context context, String incomingNumber) {
-        if ( ! isMasterSwitchEnabled( context) ) {
+        if (!isMasterSwitchEnabled( context)) {
             Log.d( LOGTAG, "call blocked disabled");
             return;
         }
 
-        if ( isAlwaysAllowContacts(context) ) {
-            if ( isNumberInContacts( context, incomingNumber)) {
+        if (isAlwaysAllowContacts(context) ) {
+            if (isNumberInContacts( context, incomingNumber)) {
                 Log.i( LOGTAG, "number in contacts");
                 return;
             }
 
-            if ( isOnlyAllowContacts( context)) {
+            if (isOnlyAllowContacts( context)) {
                 Log.i( LOGTAG, "number not in contacts");
                 hangupCall(context, incomingNumber, "Caller not in contats");
                 return;
@@ -94,7 +94,6 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
         SQLiteDatabase readableDb = AloneSQLiteHelper.getInstance(context).getReadableDatabase();
         PhoneNumber number = PhoneNumber.findByNumber(readableDb, incomingNumber);
-
         if (number != null) {
             Log.i( LOGTAG, "number in list of blocked numbers");
             hangupCall(context, incomingNumber, number.getName());

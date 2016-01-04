@@ -69,7 +69,7 @@ public class AddNumberDialogFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         myNumber = ((EditText) view.findViewById(R.id.number)).getText().toString();
-                        myNumber = PhoneNumberHelper.normalize(myNumber);
+                        myNumber = PhoneNumberHelper.normalize(getContext(), myNumber);
                         myName = ((EditText) view.findViewById(R.id.name)).getText().toString();
                         addPhoneNumberToDb(myNumber, myName);
                     }
@@ -93,7 +93,7 @@ public class AddNumberDialogFragment extends DialogFragment {
                     // validate entered number and set
                     String number = ((EditText) v).getText().toString();
                     Log.d( LOGTAG, "validating number: " + number);
-                    boolean isValid = PhoneNumberHelper.isValid(number);
+                    boolean isValid = PhoneNumberHelper.isValid(getContext(), number);
                     Button buttonNo = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
                     buttonNo.setEnabled(isValid);
                 }
