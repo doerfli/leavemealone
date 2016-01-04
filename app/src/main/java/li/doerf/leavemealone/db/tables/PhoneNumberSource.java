@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Map;
 
 import li.doerf.leavemealone.db.annotations.Column;
@@ -31,10 +32,10 @@ public class PhoneNumberSource extends TableBase {
         return source;
     }
 
-    private static PhoneNumberSource create(Cursor aCursor) {
+    public static PhoneNumberSource create(Cursor aCursor) {
         PhoneNumberSource item = new PhoneNumberSource();
         Map<String, Field> columnNamesAndFields = item.getColumnNamesWithFields();
-        item.fillFromCursor(aCursor, columnNamesAndFields);
+        item.fillFromCursor(null, aCursor, columnNamesAndFields);
         return item;
     }
 
@@ -47,13 +48,13 @@ public class PhoneNumberSource extends TableBase {
         return item;
     }
 
-    private static PhoneNumberSource findByName(SQLiteDatabase db, String name) {
+    private static PhoneNumberSource findByName(SQLiteDatabase db, String aName) {
         PhoneNumberSource item = new PhoneNumberSource();
         Cursor c = db.query(
                 item.getTableName(),
                 item.getColumnNames(),
                 "name = ?",
-                new String[] { name },
+                new String[]{aName},
                 null,
                 null,
                 "name");
@@ -61,7 +62,12 @@ public class PhoneNumberSource extends TableBase {
         if (c.moveToFirst()) {
             return PhoneNumberSource.create(c);
         }
+        return null;
+    }
 
+    @Override
+    protected TableBase getReferredObject(SQLiteDatabase db, String aReferenceName, Long anId) {
+        // no reference used in this class
         return null;
     }
 }

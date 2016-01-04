@@ -33,14 +33,8 @@ public class AloneSQLiteHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.i(LOGTAG, "Initializing Database: " + DATABASE_NAME);
-
         new PhoneNumber().createTable(db);
         new PhoneNumberSource().createTable(db);
-/*
-        // TODO remove those when blacklist or custom number selection is available
-        PhoneNumber.create("dummy", "+41791234567", "a mobile", DateTime.now()).insert(db);
-        PhoneNumber.create("dummy", "+41441111111", "a fixedline", DateTime.now()).insert( db);
-*/
     }
 
     @Override

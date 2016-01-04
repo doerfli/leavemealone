@@ -81,7 +81,7 @@ public class KtippBlocklistRetrievalService extends Service {
                     PhoneNumberSource source = PhoneNumberSource.update(db, "_ktipp");
                     DateTime now = DateTime.now(); // must be same for all
                     for (Map<String,String> map : result) {
-                        PhoneNumber.update(db, source, map.get("number"), map.get("name"), now).insert(db);
+                        PhoneNumber.update(db, source, map.get("number"), map.get("name"), now);
                     }
                     // db: remove old entries
                     PhoneNumber.deleteOldEntries(db, source, now);
@@ -188,6 +188,9 @@ public class KtippBlocklistRetrievalService extends Service {
         s = s.replaceAll("&amp", "&");
         s = s.replaceAll("  ", " ");
         s = s.trim();
+        if (s.startsWith("Firma: ")) {
+            s = s.substring(7);
+        }
         if (s.length() <= 200) return s;
         else return s.substring(0, 200 - 3) + "...";
     }

@@ -6,8 +6,10 @@ import android.database.sqlite.SQLiteDatabase;
 import org.joda.time.DateTime;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Map;
 
+import li.doerf.leavemealone.db.AloneSQLiteHelper;
 import li.doerf.leavemealone.db.annotations.Column;
 import li.doerf.leavemealone.db.annotations.Table;
 
@@ -67,10 +69,10 @@ public class PhoneNumber extends TableBase {
         return number;
     }
 
-    public static PhoneNumber create(Cursor aCursor) {
+    public static PhoneNumber create(SQLiteDatabase db, Cursor aCursor) {
         PhoneNumber item = new PhoneNumber();
         Map<String, Field> columnNamesAndFields = item.getColumnNamesWithFields();
-        item.fillFromCursor(aCursor, columnNamesAndFields);
+        item.fillFromCursor(db, aCursor, columnNamesAndFields);
         return item;
     }
 
@@ -87,9 +89,10 @@ public class PhoneNumber extends TableBase {
 
     public static void deleteOldEntries(SQLiteDatabase db, PhoneNumberSource aSource, DateTime aNow) {
         PhoneNumber item = new PhoneNumber();
-        db.delete(item.getTableName(),
-                  "source = ? AND last_modified NOT ?",
-                  new String[] { aSource.getId().toString(), Long.toString(aNow.getMillis()) });
+        db.delete(
+                item.getTableName(),
+                "source = ? AND last_modified != ?",
+                new String[]{aSource.getId().toString(), Long.toString(aNow.getMillis())});
     }
 
     public static Cursor listAll(SQLiteDatabase db) {
@@ -115,8 +118,8 @@ public class PhoneNumber extends TableBase {
                 null,
                 "number");
 
-        if ( c.moveToFirst() ) {
-            return PhoneNumber.create(c);
+        if (c.moveToFirst()) {
+            return PhoneNumber.create(db, c);
         }
 
         return null;
@@ -133,10 +136,38 @@ public class PhoneNumber extends TableBase {
                 null,
                 "number");
 
-        if ( c.moveToFirst() ) {
-            return PhoneNumber.create(c);
+        if (c.moveToFirst()) {
+            return PhoneNumber.create(db, c);
         }
 
+        return null;
+    }
+
+    private static Map<Long, PhoneNumberSource> cache = new HashMap<Long, PhoneNumberSource>();
+
+    @Override
+    protected TableBase getReferredObject(SQLiteDatabase db, String aReferenceName, Long anId) {
+        if ("source".equals(aReferenceName)) {
+            PhoneNumberSource item = cache.get(anId);
+            if (item != null) {
+                return item;
+            }
+            item = new PhoneNumberSource();
+            Cursor c = db.query(
+                    item.getTableName(),
+                    item.getColumnNames(),
+                    "_id = ?",
+                    new String[]{anId.toString()},
+                    null,
+                    null,
+                    "_id");
+
+            if (c.moveToFirst()) {
+                item = PhoneNumberSource.create(c);
+                cache.put(anId, item);
+                return item;
+            }
+        }
         return null;
     }
 }

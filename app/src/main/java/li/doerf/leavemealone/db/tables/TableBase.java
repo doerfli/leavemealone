@@ -17,16 +17,15 @@ import li.doerf.leavemealone.db.annotations.Table;
  * Created by moo on 29/01/15.
  */
 abstract class TableBase  {
-
     private String tableName;
     private Map<String,Field> columnNamesAndFields;
     private final String LOGTAG = this.getClass().getSimpleName();
 
     public abstract Long getId();
-
     public abstract void setId( Long anId);
+    protected abstract TableBase getReferredObject(SQLiteDatabase db, String aReferenceName, Long anId);
 
-    String getTableName() {
+    protected String getTableName() {
         if ( tableName == null ) {
             Table annotationTable = getClass().getAnnotation(Table.class);
             if (annotationTable == null) {
@@ -37,7 +36,7 @@ abstract class TableBase  {
         return tableName;
     }
 
-    public void createTable( SQLiteDatabase db) {
+    public void createTable(SQLiteDatabase db) {
         StringBuilder sql = new StringBuilder("CREATE TABLE ");
         sql.append(getTableName());
         sql.append(" (");
@@ -79,7 +78,7 @@ abstract class TableBase  {
         db.execSQL( query);
     }
 
-    public void dropTable( SQLiteDatabase db) {
+    public void dropTable(SQLiteDatabase db) {
         String query = String.format("DROP TABLE %s", getTableName());
         Log.d(LOGTAG, "SQL query: " + query);
         db.execSQL( query);
@@ -88,7 +87,7 @@ abstract class TableBase  {
     /**
      * @return an array with the names of all sqlite db columns
      */
-    public String[] getColumnNames() {
+    protected String[] getColumnNames() {
         Map<String, Field> columnNamesWithFields = getColumnNamesWithFields();
         return columnNamesWithFields.keySet().toArray( new String[columnNamesWithFields.size()]);
     }
@@ -96,7 +95,7 @@ abstract class TableBase  {
     /**
      * @return a map with the column names as keys and fields as values
      */
-    public Map<String,Field> getColumnNamesWithFields() {
+    protected Map<String,Field> getColumnNamesWithFields() {
         if ( columnNamesAndFields == null ) {
             Map<String, Field> result = new TreeMap<>();
             for (Field field : getClass().getDeclaredFields()) {
@@ -112,7 +111,7 @@ abstract class TableBase  {
         return columnNamesAndFields;
     }
 
-    public String getPrimaryKeyColumnName() {
+    protected String getPrimaryKeyColumnName() {
         Map<String, Field> columns = getColumnNamesWithFields();
         for ( Map.Entry<String,Field> e : columns.entrySet() ) {
             Column c = getColumn( e.getValue());
@@ -128,23 +127,23 @@ abstract class TableBase  {
         return aField.getAnnotation(Column.class);
     }
 
-    private boolean isPrimaryKey( Field aField) {
+    private boolean isPrimaryKey(Field aField) {
         Column fieldEntityAnnotation = getColumn(aField);
         return fieldEntityAnnotation.isPrimaryKey();
     }
 
-    private boolean isAutoIncrement( Field aField) {
+    private boolean isAutoIncrement(Field aField) {
         Column fieldEntityAnnotation = getColumn(aField);
         return fieldEntityAnnotation.isAutoincrement();
     }
 
-    private boolean isColumn( Field aField)
+    private boolean isColumn(Field aField)
     {
         Column fieldEntityAnnotation = getColumn(aField);
         return fieldEntityAnnotation != null;
     }
 
-    private String getColumnName( Field aField)
+    private String getColumnName(Field aField)
     {
         Column fieldEntityAnnotation = getColumn(aField);
 
@@ -160,8 +159,7 @@ abstract class TableBase  {
         ContentValues contentValues = new ContentValues();
 
         for (Field field : getClass().getDeclaredFields()) {
-            if ( isColumn( field)) {
-
+            if (isColumn( field)) {
                 if ( ! isAutoIncrement(field) ) {
                     putInContentValues(contentValues, field, this);
                 }
@@ -171,7 +169,7 @@ abstract class TableBase  {
         return contentValues;
     }
 
-    protected void fillFromCursor(Cursor aCursor, Map<String, Field> aColumnNamesAndFields) {
+    protected void fillFromCursor(SQLiteDatabase db, Cursor aCursor, Map<String, Field> aColumnNamesAndFields) {
         try {
             for (Map.Entry<String, Field> e : aColumnNamesAndFields.entrySet()) {
                 String columnName = e.getKey();
@@ -181,7 +179,7 @@ abstract class TableBase  {
 
                 if (String.class.isAssignableFrom(type)) {
                     String value = aCursor.getString(aCursor.getColumnIndex(columnName));
-                    field.set( this, value);
+                    field.set(this, value);
                 } else if (Integer.class.isAssignableFrom(type)) {
                     Integer value = aCursor.getInt(aCursor.getColumnIndex(columnName));
                     field.set(this, value);
@@ -200,25 +198,29 @@ abstract class TableBase  {
                 }
                 else
                 {
-                    // Byte, Byte[] and Boolean are currently not supported
-                    Log.w(LOGTAG, "Ignoring field - unsupported datatype: " + type);
+                    Column column = getColumn(field);
+                    if (column.isReference() && db != null) {
+                        Long id = aCursor.getLong(aCursor.getColumnIndex(columnName));
+                        TableBase value = getReferredObject(db, columnName, id);
+                        field.set(this, value);
+                    } else {
+                        // Byte, Byte[] and Boolean are currently not supported
+                        Log.w(LOGTAG, "Ignoring field - unsupported datatype: " + type);
+                    }
                 }
             }
-        }
-        catch ( IllegalAccessException e)
-        {
+        } catch (IllegalAccessException e) {
             Log.e("PantryItem", "caught IllegalAccessException. could not insert data", e);
         }
     }
 
-    public void putInContentValues(ContentValues contentValues, Field field,
-                                   Object object) throws IllegalAccessException {
+    protected void putInContentValues(ContentValues contentValues, Field field,
+                                      Object object) throws IllegalAccessException {
         if (!field.isAccessible())
             field.setAccessible(true); // for private variables
         Object fieldValue = field.get(object);
 
-        if ( fieldValue == null )
-        {
+        if (fieldValue == null) {
             Log.v(LOGTAG, "fieldValue null. ignoring: " + field);
             return;
         }
@@ -236,32 +238,26 @@ abstract class TableBase  {
             contentValues.put(key, (Short) fieldValue);
         } else if (fieldValue instanceof Double) {
             contentValues.put(key, (Double) fieldValue);
-        } else
-        {
-            Column column = getColumn( field);
-
-            if ( column.isReference() )
-            {
+        } else {
+            Column column = getColumn(field);
+            if (column.isReference()) {
                 contentValues.put(key, ((TableBase) fieldValue).getId());
-            }
-            else
-            {
+            } else {
                 // Byte, Byte[] and Boolean are currently not supported
                 Log.w(LOGTAG, "Ignoring field - unsupported datatype: " + field);
             }
         }
     }
 
-    public long insert( SQLiteDatabase db) {
-        if ( getId() != null )
-        {
-            throw new IllegalStateException( "id is already set. This object cannot be inserted");
+    public long insert(SQLiteDatabase db) {
+        if (getId() != null) {
+            throw new IllegalStateException( "id: "+ getId() + " is already set. This object cannot be inserted");
         }
 
         try {
             ContentValues values = getFilledContentValues();
-            long id = db.insert( getTableName(), null, values);
-            setId( id);
+            long id = db.insert(getTableName(), null, values);
+            setId(id);
             Log.i(LOGTAG, "Inserted entity - id: " + id);
             return id;
         } catch (IllegalAccessException e) {
@@ -271,7 +267,7 @@ abstract class TableBase  {
         return -1;
     }
 
-    public void delete( SQLiteDatabase db) {
+    public void delete(SQLiteDatabase db) {
         String idAsString = Long.toString(getId());
         db.delete(
                 getTableName(),
@@ -279,5 +275,4 @@ abstract class TableBase  {
                 new String[] { idAsString });
         Log.i(LOGTAG, "Deleted entity - id: " + idAsString);
     }
-
 }
