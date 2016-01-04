@@ -112,7 +112,7 @@ public class PhoneNumber extends TableBase {
         Cursor c = db.query(
                 item.getTableName(),
                 item.getColumnNames(),
-                "number = ?",
+                "number LIKE ?%",
                 new String[] { aNumber },
                 null,
                 null,

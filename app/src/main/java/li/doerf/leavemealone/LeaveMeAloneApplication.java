@@ -4,9 +4,11 @@ import android.app.AlarmManager;
 import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import li.doerf.leavemealone.db.AloneSQLiteHelper;
+import li.doerf.leavemealone.db.tables.PhoneNumber;
 import li.doerf.leavemealone.services.KtippBlocklistRetrievalService;
 import li.doerf.leavemealone.util.NotificationHelper;
 
