@@ -37,8 +37,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        myBockedNumbersFragment = BockedNumbersListFragment.newInstance();
-        getSupportFragmentManager().beginTransaction().add( R.id.fragment_container, myBockedNumbersFragment).commit();
+        myBockedNumbersFragment = BockedNumbersListFragment.newInstance( new String[] {"_ktipp"});
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myBockedNumbersFragment).commit();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -143,18 +143,12 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-//        } else if (id == R.id.nav_gallery) {
-//
-//        } else if (id == R.id.nav_slideshow) {
-//
-//        } else if (id == R.id.nav_manage) {
-//
-//        } else if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//
+        if (id == R.id.nav_blocked_numbers) {
+            myBockedNumbersFragment = BockedNumbersListFragment.newInstance( new String[] {"_ktipp"});
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myBockedNumbersFragment).commit();
+        } else if (id == R.id.nav_blocked_numbers_ktipp) {
+            myBockedNumbersFragment = BockedNumbersListFragment.newInstance( new String[] {"manual"});
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myBockedNumbersFragment).commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

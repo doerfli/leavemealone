@@ -3,6 +3,8 @@ package li.doerf.leavemealone.db.tables;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.common.base.Strings;
+
 import org.joda.time.DateTime;
 
 import java.lang.reflect.Field;
@@ -107,18 +109,33 @@ public class PhoneNumber extends TableBase {
                 "number");
     }
 
-    public static Cursor listAllExceptKtipp(SQLiteDatabase db) {
-        PhoneNumberSource source = PhoneNumberSource.findByName( db, "_ktipp");
-        String sourceId = "";
-        if ( source != null ) {
-            sourceId = source.getId().toString();
+    public static Cursor listAllExcept(SQLiteDatabase db, String[] aExcludedSources) {
+        String whereString = null;
+        String[] whereParams = null;
+
+        if ( aExcludedSources.length > 0) {
+            whereParams = new String[aExcludedSources.length];
+
+            for ( int i = 0; i < aExcludedSources.length; i++) {
+                PhoneNumberSource source = PhoneNumberSource.findByName(db, aExcludedSources[i]);
+                String sourceId = "";
+                if (source != null) {
+                    sourceId = source.getId().toString();
+                }
+                whereParams[i] = sourceId;
+            }
+
+            String q = Strings.repeat("?,", aExcludedSources.length);
+            q = q.substring(0, q.length() - 1);
+            whereString = "source NOT IN (" + q + ")";
         }
+
         PhoneNumber item = new PhoneNumber();
         return db.query(
                 item.getTableName(),
                 item.getColumnNames(),
-                "source <> ?",
-                new String[]{sourceId},
+                whereString,
+                whereParams,
                 null,
                 null,
                 "number");

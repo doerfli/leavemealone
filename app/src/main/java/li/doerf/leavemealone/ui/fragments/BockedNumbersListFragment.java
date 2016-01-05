@@ -28,13 +28,20 @@ import li.doerf.leavemealone.ui.adapters.MultiSelector;
  */
 public class BockedNumbersListFragment extends Fragment implements MultiSelector.SelectableModeListener, BlockedNumbersAdapter.AdapterModelChangedListener {
     private final String LOGTAG = getClass().getSimpleName();
+    private String[] myFilteredSources;
     private RecyclerView myBlockedNumbersList;
     private BlockedNumbersAdapter myBlockedNumbersAdapter;
     private SQLiteDatabase myReadbableDb;
     private boolean myShowListMultiselectModeMenu = false;
 
-    public static BockedNumbersListFragment newInstance() {
-        return new BockedNumbersListFragment();
+    public static BockedNumbersListFragment newInstance( String[] aFilteredSources) {
+        BockedNumbersListFragment f = new BockedNumbersListFragment();
+        f.setFilteredSources( aFilteredSources);
+        return f;
+    }
+
+    public void setFilteredSources( String[] aFilteredSources) {
+        myFilteredSources = aFilteredSources;
     }
 
     @Override
@@ -100,7 +107,7 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
     }
 
     public void refreshList() {
-        myBlockedNumbersAdapter.swapCursor(PhoneNumber.listAllExceptKtipp(myReadbableDb));
+        myBlockedNumbersAdapter.swapCursor(PhoneNumber.listAllExcept(myReadbableDb, myFilteredSources));
     }
 
     @Override
