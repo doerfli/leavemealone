@@ -1,9 +1,11 @@
 package li.doerf.leavemealone.services;
 
+import android.app.IntentService;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.IBinder;
 //import android.support.annotation.Nullable; // does not compile for me
 import android.util.Log;
@@ -35,93 +37,92 @@ import li.doerf.leavemealone.db.AloneSQLiteHelper;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
 import li.doerf.leavemealone.db.tables.PhoneNumberSource;
 import li.doerf.leavemealone.db.tables.Property;
+import li.doerf.leavemealone.util.PhoneNumberHelper;
 
 /**
+ * Service to download the K-Tipp Blocklist and store into database.
+ *
  * Created by pamapa on 15/12/15.
  */
-public class KtippBlocklistRetrievalService extends Service {
+public class KtippBlocklistRetrievalService extends IntentService {
     private final String LOGTAG = getClass().getSimpleName();
 
-    //@Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        Log.d(LOGTAG, "onBind");
-        return null;
+    public KtippBlocklistRetrievalService() {
+        super("KtippBlocklistRetrievalService");
+    }
+
+    /**
+     * Creates an IntentService.  Invoked by your subclass's constructor.
+     *
+     * @param name Used to name the worker thread, important only for debugging.
+     */
+    public KtippBlocklistRetrievalService(String name) {
+        super(name);
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, final int startId) {
-        Log.d(LOGTAG, "onStartCommand - startId: " + startId);
-        final Context context = this;
+    protected void onHandleIntent(Intent intent) {
+        Log.d(LOGTAG, "onHandleIntent");
+        Context context = getBaseContext();
+        SQLiteDatabase db = null;
 
-        // TODO use AsyncTask instead of Runnable
-        // http://developer.android.com/reference/android/os/AsyncTask.html
-        Runnable r = new Runnable() {
-            public void run() {
-                try {
-                    String content = fetchPage(0);
+        try {
+            String content = fetchPage(0);
 
-                    String sourceDate = extractSubString(content, "Letzte Aktualisierung:", "<");
-                    Log.d(LOGTAG, "source date: " + sourceDate);
+            String sourceDate = extractSubString(content, "Letzte Aktualisierung:", "<");
+            Log.d(LOGTAG, "source date: " + sourceDate);
 
-                    SQLiteDatabase db = AloneSQLiteHelper.getInstance(context).getReadableDatabase();
-                    Property item = Property.findByName(db, "ktipp_source_date");
-                    if (item != null) {
-                        if (item.getKey().equals(sourceDate)) {
-                            Log.d(LOGTAG, "We already have this version: " + sourceDate);
-                            stopSelf(startId);
-                            return;
-                        }
-                    }
-
-                    List<Map<String,String>> result = parsePages(content);
-                    //Log.d(LOGTAG, "raw result: " + result);
-
-                    result = cleanupEntries(result);
-                    //Log.d(LOGTAG, "cleaned result size: " + result.size());
-                    //Log.d(LOGTAG, "cleaned result: " + result);
-
-                    // db: insert new entries
-                    db = AloneSQLiteHelper.getInstance(context).getWritableDatabase();
-                    Property.update(db, "ktipp_source_date", sourceDate);
-                    PhoneNumberSource source = PhoneNumberSource.update(db, "_ktipp");
-                    DateTime now = DateTime.now(); // must be same for all
-                    for (Map<String,String> map : result) {
-                        // TODO insert/update is very slow when done repeately. Implement a insert method that takes a list of elements to insert
-                        // and use beginTransaction/endTransaction around the insert, then all insert should be done in one batch which is said to be faster.
-                        PhoneNumber.update(db, source, map.get("number"), map.get("name"), now);
-                    }
-                    // db: remove old entries
-                    PhoneNumber.deleteOldEntries(db, source, now);
-
-                    // TODO update ui when sync complete
-                } catch (IOException e) {
-                    e.printStackTrace();
+            db = AloneSQLiteHelper.getInstance(context).getReadableDatabase();
+            Property item = Property.findByName(db, "ktipp_source_date");
+            if (item != null) {
+                if (item.getKey().equals(sourceDate)) {
+                    Log.d(LOGTAG, "We already have this version: " + sourceDate);
+                    return;
                 }
-                stopSelf(startId);
             }
-        };
 
-        Thread t = new Thread(r);
-        t.start();
-        return START_STICKY;
+            List<Map<String, String>> result = parsePages(content);
+            //Log.d(LOGTAG, "raw result: " + result);
+
+            result = cleanupEntries(result);
+            //Log.d(LOGTAG, "cleaned result size: " + result.size());
+            //Log.d(LOGTAG, "cleaned result: " + result);
+
+            // db: insert new entries
+            db = AloneSQLiteHelper.getInstance(context).getWritableDatabase();
+            Property.update(db, "ktipp_source_date", sourceDate);
+
+//            db.beginTransaction();
+            PhoneNumberSource source = PhoneNumberSource.update(db, "_ktipp");
+            DateTime now = DateTime.now(); // must be same for all
+            for (Map<String, String> map : result) {
+                // TODO insert/update is very slow when done repeately. Implement a insert method that takes a list of elements to insert
+                // and use beginTransaction/endTransaction around the insert, then all insert should be done in one batch which is said to be faster.
+                PhoneNumber.update(db, source, map.get("number"), map.get("name"), now);
+            }
+            // db: remove old entries
+            PhoneNumber.deleteOldEntries(db, source, now);
+//            db.setTransactionSuccessful();
+            // TODO update ui when sync complete
+        } catch (IOException e) {
+            Log.e( LOGTAG, "caught IOException", e);
+        } finally {
+//            db.endTransaction();
+            Log.d(LOGTAG, "finished");
+        }
     }
 
     private List<Map<String,String>> cleanupEntries(List<Map<String,String>> in) {
         ArrayList<Map<String,String>> uniq = new ArrayList<Map<String,String>>();
         Set<String> seen = new HashSet<>();
         for (Map<String,String> map : in) {
-            // TODO use PhoneNumberHelper.normalize to clean up number
-            // TODO remove entries with only 0
             String n = map.get("number");
 
-            // make international format
-            if (n.startsWith("00"))  n = "+" + n.substring(2, n.length());
-            else if (n.startsWith("0")) n = "+41" + n.substring(1, n.length());
+            n = PhoneNumberHelper.normalize( getApplicationContext(), n);
             map.put("number", n);
 
             // filter
-            if (n.length() < 4) {
+            if (n.length() < 5) {
                 // too dangerous
                 //Log.d(LOGTAG, "Skip too small number: " + n);
                 continue;
@@ -150,7 +151,6 @@ public class KtippBlocklistRetrievalService extends Service {
         ArrayList<Map<String,String>> ret = new ArrayList<Map<String,String>>();
 
         Document doc = Jsoup.parse(content);
-        content = null;
 
         // extract last page
         Elements pages = doc.select("li");
@@ -167,7 +167,6 @@ public class KtippBlocklistRetrievalService extends Service {
         for (int p = 1; p <= lastPage; p++) {
             content = fetchPage(p);
             doc = Jsoup.parse(content);
-            content = null;
             ret.addAll(parsePage(doc));
         }
 
@@ -302,7 +301,7 @@ public class KtippBlocklistRetrievalService extends Service {
             }
             in.close();
         } catch(MalformedURLException e) {
-            e.printStackTrace();
+            Log.e( LOGTAG, "caught MalformedURLException", e);
         }
         return ret.toString();
     }
