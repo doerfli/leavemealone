@@ -11,8 +11,7 @@
     <item
         android:id="@+id/action_sync"
         android:title="@string/action_sync"
-        android:icon="@drawable/ic_refresh_white_48dp"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_settings"

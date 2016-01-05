@@ -65,7 +65,7 @@ public class KtippBlocklistRetrievalService extends IntentService {
             Property item = Property.findByName(db, "ktipp_source_date");
             if (item != null) {
                 if (item.getKey().equals(sourceDate)) {
-                    Log.d(LOGTAG, "We already have this version: " + sourceDate);
+                    Log.i(LOGTAG, "We already have this version: " + sourceDate);
                     return;
                 }
             }
