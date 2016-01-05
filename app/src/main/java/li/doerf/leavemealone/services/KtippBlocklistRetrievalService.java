@@ -1,13 +1,9 @@
 package li.doerf.leavemealone.services;
 
 import android.app.IntentService;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
-import android.os.IBinder;
-//import android.support.annotation.Nullable; // does not compile for me
 import android.util.Log;
 
 import org.joda.time.DateTime;
@@ -39,6 +35,8 @@ import li.doerf.leavemealone.db.tables.PhoneNumberSource;
 import li.doerf.leavemealone.db.tables.Property;
 import li.doerf.leavemealone.util.PhoneNumberHelper;
 
+//import android.support.annotation.Nullable; // does not compile for me
+
 /**
  * Service to download the K-Tipp Blocklist and store into database.
  *
@@ -51,20 +49,11 @@ public class KtippBlocklistRetrievalService extends IntentService {
         super("KtippBlocklistRetrievalService");
     }
 
-    /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     * @param name Used to name the worker thread, important only for debugging.
-     */
-    public KtippBlocklistRetrievalService(String name) {
-        super(name);
-    }
-
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(LOGTAG, "onHandleIntent");
         Context context = getBaseContext();
-        SQLiteDatabase db = null;
+        SQLiteDatabase db;
 
         try {
             String content = fetchPage(0);
@@ -113,7 +102,7 @@ public class KtippBlocklistRetrievalService extends IntentService {
     }
 
     private List<Map<String,String>> cleanupEntries(List<Map<String,String>> in) {
-        ArrayList<Map<String,String>> uniq = new ArrayList<Map<String,String>>();
+        ArrayList<Map<String,String>> uniq = new ArrayList<>();
         Set<String> seen = new HashSet<>();
         for (Map<String,String> map : in) {
             String n = map.get("number");
@@ -148,7 +137,7 @@ public class KtippBlocklistRetrievalService extends IntentService {
     }
 
     private List<Map<String,String>> parsePages(String content) throws IOException {
-        ArrayList<Map<String,String>> ret = new ArrayList<Map<String,String>>();
+        ArrayList<Map<String,String>> ret = new ArrayList<>();
 
         Document doc = Jsoup.parse(content);
 
@@ -174,7 +163,7 @@ public class KtippBlocklistRetrievalService extends IntentService {
     }
 
     private List<Map<String,String>> parsePage(Document doc) throws IOException {
-        ArrayList<Map<String,String>> ret = new ArrayList<Map<String,String>>();
+        ArrayList<Map<String,String>> ret = new ArrayList<>();
         Elements sections = doc.select("section");
         if (sections == null) throw new IOException("parsePage: no sections found");
         for (Element section : sections) {
@@ -182,7 +171,7 @@ public class KtippBlocklistRetrievalService extends IntentService {
             String name = extractName(section.select("p").text());
             //Log.d(LOGTAG, "name: " + name + " numbers: " + numbers);
             for (String number : numbers) {
-                HashMap<String,String> map = new HashMap<String,String>();
+                HashMap<String,String> map = new HashMap<>();
                 map.put("number", number);
                 map.put("name", name);
                 ret.add(map);
@@ -205,19 +194,19 @@ public class KtippBlocklistRetrievalService extends IntentService {
     }
 
     private List<String> extractNumbers(final String str) {
-        ArrayList<String> ret = new ArrayList<String>();
+        ArrayList<String> ret = new ArrayList<>();
         //Log.d(LOGTAG, "extractNumbers: " + str);
         String[] arr = str.split("und|oder|sowie|auch|,|;");
         for (String a : arr) {
-            if (a.indexOf("/") != -1) {
+            if (a.contains("/")) {
                 ret.addAll(extractSlashedNumbers(a));
             }
-            else if (a.indexOf("bis") != -1) {
+            else if (a.contains("bis")) {
                 ret.addAll(extractRangeNumbers(a));
             }
             else {
                 a = extractNumber(a);
-                if (a != "") ret.add(a);
+                if ("".equals(a)) ret.add(a);
             }
         }
         return ret;
@@ -226,17 +215,17 @@ public class KtippBlocklistRetrievalService extends IntentService {
     // 021 558 73 91/92/93/94/95
     private List<String> extractSlashedNumbers(final String str) {
         //Log.d(LOGTAG, "extractSlashedNumbers: " + str);
-        ArrayList<String> ret = new ArrayList<String>();
+        ArrayList<String> ret = new ArrayList<>();
         String[] arr = str.split("/");
         String a0 = extractNumber(arr[0]);
-        if (a0 != "") {
+        if (! "".equals(a0)) {
             //Log.d(LOGTAG, "a0: " + a0);
             ret.add(a0);
             String base = a0.substring(0, a0.length()-2);
             //Log.d(LOGTAG, "base: " + base);
             for (int i = 1; i < arr.length; i++) {
                 String ax = extractNumber(arr[i]);
-                if (ax != "") {
+                if (! "".equals(ax)) {
                     ax = extractNumber(base + ax);
                     //Log.d(LOGTAG, "ax: " + ax);
                     ret.add(ax);
@@ -249,7 +238,7 @@ public class KtippBlocklistRetrievalService extends IntentService {
     // 044 400 00 00 bis 044 400 00 19
     private List<String> extractRangeNumbers(final String str) {
         //Log.d(LOGTAG, "extractRangeNumbers: " + str);
-        ArrayList<String> ret = new ArrayList<String>();
+        ArrayList<String> ret = new ArrayList<>();
         String[] arr = str.split("bis");
         String s = extractNumber(arr[0]);
         String e = extractNumber(arr[1]);
@@ -271,7 +260,7 @@ public class KtippBlocklistRetrievalService extends IntentService {
     }
 
     private String fetchPage(final int page_nr) throws IOException {
-        StringBuffer ret = new StringBuffer();
+        StringBuilder ret = new StringBuilder();
         try {
             URL url = new URL("https://www.ktipp.ch/service/warnlisten/detail/?warnliste_id=7&ajax=ajax-search-form&page="+Integer.toString(page_nr));
             Log.d(LOGTAG, "fetchPage: " + url.toString());
@@ -283,7 +272,7 @@ public class KtippBlocklistRetrievalService extends IntentService {
             // obtain the encoding returned by the server
             String encoding = connection.getContentEncoding();
 
-            InputStream is = null;
+            InputStream is;
             if (encoding != null && encoding.equalsIgnoreCase("gzip")) {
                 is = new GZIPInputStream(connection.getInputStream());
             }
