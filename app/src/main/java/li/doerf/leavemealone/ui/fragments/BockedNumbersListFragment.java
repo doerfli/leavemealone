@@ -85,7 +85,7 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
     @Override
     public void onStart() {
         super.onStart();
-        myBlockedNumbersAdapter.swapCursor(PhoneNumber.listAll(myReadbableDb));
+        refreshList();
     }
 
     @Override
@@ -100,7 +100,7 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
     }
 
     public void refreshList() {
-        myBlockedNumbersAdapter.swapCursor(PhoneNumber.listAll(myReadbableDb));
+        myBlockedNumbersAdapter.swapCursor(PhoneNumber.listAllExceptKtipp(myReadbableDb));
     }
 
     @Override
@@ -117,7 +117,7 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
 
     @Override
     public void itemsDeleted() {
-        myBlockedNumbersAdapter.swapCursor(PhoneNumber.listAll(myReadbableDb));
+        refreshList();
         Snackbar.make( getView(), getString(R.string.numbers_deleted), Snackbar.LENGTH_LONG).show();
     }
 

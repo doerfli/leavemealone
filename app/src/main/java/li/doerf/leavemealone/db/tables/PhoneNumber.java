@@ -107,6 +107,19 @@ public class PhoneNumber extends TableBase {
                 "number");
     }
 
+    public static Cursor listAllExceptKtipp(SQLiteDatabase db) {
+        PhoneNumberSource source = PhoneNumberSource.findByName( db, "_ktipp");
+        PhoneNumber item = new PhoneNumber();
+        return db.query(
+                item.getTableName(),
+                item.getColumnNames(),
+                "source <> ?",
+                new String[]{source.getId().toString()},
+                null,
+                null,
+                "number");
+    }
+
     public static PhoneNumber findByNumber(SQLiteDatabase db, String aNumber) {
         PhoneNumber item = new PhoneNumber();
         Cursor c = db.query(
