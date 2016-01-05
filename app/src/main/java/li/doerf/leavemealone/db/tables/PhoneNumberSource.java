@@ -48,7 +48,7 @@ public class PhoneNumberSource extends TableBase {
         return item;
     }
 
-    private static PhoneNumberSource findByName(SQLiteDatabase db, String aName) {
+    public static PhoneNumberSource findByName(SQLiteDatabase db, String aName) {
         PhoneNumberSource item = new PhoneNumberSource();
         Cursor c = db.query(
                 item.getTableName(),
