@@ -15,7 +15,7 @@ import li.doerf.leavemealone.db.tables.Property;
  * Created by moo on 29/01/15.
  */
 public class AloneSQLiteHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static AloneSQLiteHelper myInstance;
     private static final String DATABASE_NAME = "alone.db";
     private final String LOGTAG = getClass().getSimpleName();
