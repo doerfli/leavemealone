@@ -28,13 +28,20 @@ import li.doerf.leavemealone.ui.adapters.MultiSelector;
  */
 public class BockedNumbersListFragment extends Fragment implements MultiSelector.SelectableModeListener, BlockedNumbersAdapter.AdapterModelChangedListener {
     private final String LOGTAG = getClass().getSimpleName();
+    private String[] myFilteredSources;
     private RecyclerView myBlockedNumbersList;
     private BlockedNumbersAdapter myBlockedNumbersAdapter;
     private SQLiteDatabase myReadbableDb;
     private boolean myShowListMultiselectModeMenu = false;
 
-    public static BockedNumbersListFragment newInstance() {
-        return new BockedNumbersListFragment();
+    public static BockedNumbersListFragment newInstance( String[] aFilteredSources) {
+        BockedNumbersListFragment f = new BockedNumbersListFragment();
+        f.setFilteredSources( aFilteredSources);
+        return f;
+    }
+
+    public void setFilteredSources( String[] aFilteredSources) {
+        myFilteredSources = aFilteredSources;
     }
 
     @Override
@@ -85,7 +92,7 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
     @Override
     public void onStart() {
         super.onStart();
-        myBlockedNumbersAdapter.swapCursor(PhoneNumber.listAll(myReadbableDb));
+        refreshList();
     }
 
     @Override
@@ -100,7 +107,7 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
     }
 
     public void refreshList() {
-        myBlockedNumbersAdapter.swapCursor(PhoneNumber.listAll(myReadbableDb));
+        myBlockedNumbersAdapter.swapCursor(PhoneNumber.listAllExcept(myReadbableDb, myFilteredSources));
     }
 
     @Override
@@ -117,7 +124,7 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
 
     @Override
     public void itemsDeleted() {
-        myBlockedNumbersAdapter.swapCursor(PhoneNumber.listAll(myReadbableDb));
+        refreshList();
         Snackbar.make( getView(), getString(R.string.numbers_deleted), Snackbar.LENGTH_LONG).show();
     }
 

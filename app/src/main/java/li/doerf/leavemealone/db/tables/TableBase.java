@@ -17,16 +17,15 @@ import li.doerf.leavemealone.db.annotations.Table;
  * Created by moo on 29/01/15.
  */
 abstract class TableBase  {
-
     private String tableName;
     private Map<String,Field> columnNamesAndFields;
     private final String LOGTAG = this.getClass().getSimpleName();
 
     public abstract Long getId();
-
     public abstract void setId( Long anId);
+    protected abstract TableBase getReference(SQLiteDatabase db, String aReferenceName, Long anId);
 
-    String getTableName() {
+    protected String getTableName() {
         if ( tableName == null ) {
             Table annotationTable = getClass().getAnnotation(Table.class);
             if (annotationTable == null) {
@@ -37,14 +36,13 @@ abstract class TableBase  {
         return tableName;
     }
 
-    public void createTable( SQLiteDatabase db) {
+    public void createTable(SQLiteDatabase db) {
         StringBuilder sql = new StringBuilder("CREATE TABLE ");
         sql.append(getTableName());
         sql.append(" (");
         boolean firstColumn = true;
 
         for (Map.Entry<String,Field> entry : getColumnNamesWithFields().entrySet()) {
-//            String columnName = entry.getKey();
             Field field = entry.getValue();
 
             Column fieldEntityAnnotation = getColumn(field);
@@ -58,17 +56,17 @@ abstract class TableBase  {
 
                 if ( fieldEntityAnnotation.isReference() )
                 {
-                    sql.append( "INTEGER");
+                    sql.append("INTEGER");
                 }
                 else {
                     sql.append(fieldEntityAnnotation.type());
                 }
 
                 if ( fieldEntityAnnotation.isPrimaryKey() )
-                    sql.append( " PRIMARY KEY");
+                    sql.append(" PRIMARY KEY");
 
                 if ( fieldEntityAnnotation.isAutoincrement())
-                    sql.append( " AUTOINCREMENT");
+                    sql.append(" AUTOINCREMENT");
             }
 
             firstColumn = false;
@@ -79,7 +77,7 @@ abstract class TableBase  {
         db.execSQL( query);
     }
 
-    public void dropTable( SQLiteDatabase db) {
+    public void dropTable(SQLiteDatabase db) {
         String query = String.format("DROP TABLE %s", getTableName());
         Log.d(LOGTAG, "SQL query: " + query);
         db.execSQL( query);
@@ -88,7 +86,7 @@ abstract class TableBase  {
     /**
      * @return an array with the names of all sqlite db columns
      */
-    public String[] getColumnNames() {
+    protected String[] getColumnNames() {
         Map<String, Field> columnNamesWithFields = getColumnNamesWithFields();
         return columnNamesWithFields.keySet().toArray( new String[columnNamesWithFields.size()]);
     }
@@ -96,7 +94,7 @@ abstract class TableBase  {
     /**
      * @return a map with the column names as keys and fields as values
      */
-    public Map<String,Field> getColumnNamesWithFields() {
+    protected Map<String,Field> getColumnNamesWithFields() {
         if ( columnNamesAndFields == null ) {
             Map<String, Field> result = new TreeMap<>();
             for (Field field : getClass().getDeclaredFields()) {
@@ -112,7 +110,7 @@ abstract class TableBase  {
         return columnNamesAndFields;
     }
 
-    public String getPrimaryKeyColumnName() {
+    protected String getPrimaryKeyColumnName() {
         Map<String, Field> columns = getColumnNamesWithFields();
         for ( Map.Entry<String,Field> e : columns.entrySet() ) {
             Column c = getColumn( e.getValue());
@@ -128,50 +126,82 @@ abstract class TableBase  {
         return aField.getAnnotation(Column.class);
     }
 
-    private boolean isPrimaryKey( Field aField) {
+    private boolean isPrimaryKey(Field aField) {
         Column fieldEntityAnnotation = getColumn(aField);
         return fieldEntityAnnotation.isPrimaryKey();
     }
 
-    private boolean isAutoIncrement( Field aField) {
+    private boolean isAutoIncrement(Field aField) {
         Column fieldEntityAnnotation = getColumn(aField);
         return fieldEntityAnnotation.isAutoincrement();
     }
 
-    private boolean isColumn( Field aField)
+    private boolean isColumn(Field aField)
     {
         Column fieldEntityAnnotation = getColumn(aField);
         return fieldEntityAnnotation != null;
     }
 
-    private String getColumnName( Field aField)
+    private String getColumnName(Field aField)
     {
         Column fieldEntityAnnotation = getColumn(aField);
-
         if (fieldEntityAnnotation == null) {
             return null;
         }
-
         return fieldEntityAnnotation.name();
     }
 
-    private ContentValues getFilledContentValues()
-            throws IllegalAccessException {
+    // Object -> DB
+    private ContentValues getFilledContentValues() throws IllegalAccessException {
         ContentValues contentValues = new ContentValues();
-
         for (Field field : getClass().getDeclaredFields()) {
-            if ( isColumn( field)) {
-
-                if ( ! isAutoIncrement(field) ) {
+            if (isColumn(field)) {
+                if (!isAutoIncrement(field)) {
                     putInContentValues(contentValues, field, this);
                 }
             }
         }
-
         return contentValues;
     }
 
-    protected void fillFromCursor(Cursor aCursor, Map<String, Field> aColumnNamesAndFields) {
+    private void putInContentValues(ContentValues contentValues, Field field,
+                                    Object object) throws IllegalAccessException {
+        if (!field.isAccessible())
+            field.setAccessible(true); // for private variables
+        Object fieldValue = field.get(object);
+
+        if (fieldValue == null) {
+            Log.v(LOGTAG, "fieldValue null. ignoring: " + field);
+            return;
+        }
+
+        String key = getColumnName(field);
+
+        if (fieldValue instanceof String) {
+            contentValues.put(key, (String) fieldValue);
+        } else if (fieldValue instanceof Short) {
+            contentValues.put(key, (Short) fieldValue);
+        } else if (fieldValue instanceof Long) {
+            contentValues.put(key, (Long) fieldValue);
+        } else if (fieldValue instanceof Integer) {
+            contentValues.put(key, (Integer) fieldValue);
+        } else if (fieldValue instanceof Float) {
+            contentValues.put(key, (Float) fieldValue);
+        } else if (fieldValue instanceof Double) {
+            contentValues.put(key, (Double) fieldValue);
+        } else {
+            Column column = getColumn(field);
+            if (column.isReference()) {
+                contentValues.put(key, ((TableBase) fieldValue).getId());
+            } else {
+                // Byte, Byte[] and Boolean are currently not supported
+                Log.w(LOGTAG, "Ignoring field - unsupported datatype: " + field);
+            }
+        }
+    }
+
+    // DB -> Object
+    protected void fillFromCursor(SQLiteDatabase db, Cursor aCursor, Map<String, Field> aColumnNamesAndFields) {
         try {
             for (Map.Entry<String, Field> e : aColumnNamesAndFields.entrySet()) {
                 String columnName = e.getKey();
@@ -181,7 +211,10 @@ abstract class TableBase  {
 
                 if (String.class.isAssignableFrom(type)) {
                     String value = aCursor.getString(aCursor.getColumnIndex(columnName));
-                    field.set( this, value);
+                    field.set(this, value);
+                } else if (Short.class.isAssignableFrom(type)) {
+                    Short value = aCursor.getShort(aCursor.getColumnIndex(columnName));
+                    field.set(this, value);
                 } else if (Integer.class.isAssignableFrom(type)) {
                     Integer value = aCursor.getInt(aCursor.getColumnIndex(columnName));
                     field.set(this, value);
@@ -194,74 +227,34 @@ abstract class TableBase  {
                 } else if (Double.class.isAssignableFrom(type)) {
                     Double value = aCursor.getDouble(aCursor.getColumnIndex(columnName));
                     field.set(this, value);
-                } else if (Short.class.isAssignableFrom(type)) {
-                    Short value = aCursor.getShort(aCursor.getColumnIndex(columnName));
-                    field.set(this, value);
                 }
                 else
                 {
-                    // Byte, Byte[] and Boolean are currently not supported
-                    Log.w(LOGTAG, "Ignoring field - unsupported datatype: " + type);
+                    Column column = getColumn(field);
+                    if (column.isReference() && db != null) {
+                        Long id = aCursor.getLong(aCursor.getColumnIndex(columnName));
+                        TableBase value = getReference(db, columnName, id);
+                        field.set(this, value);
+                    } else {
+                        // Byte, Byte[] and Boolean are currently not supported
+                        Log.w(LOGTAG, "Ignoring field - unsupported datatype: " + type);
+                    }
                 }
             }
-        }
-        catch ( IllegalAccessException e)
-        {
+        } catch (IllegalAccessException e) {
             Log.e("PantryItem", "caught IllegalAccessException. could not insert data", e);
         }
     }
 
-    public void putInContentValues(ContentValues contentValues, Field field,
-                                   Object object) throws IllegalAccessException {
-        if (!field.isAccessible())
-            field.setAccessible(true); // for private variables
-        Object fieldValue = field.get(object);
-
-        if ( fieldValue == null )
-        {
-            Log.v(LOGTAG, "fieldValue null. ignoring: " + field);
-            return;
-        }
-
-        String key = getColumnName(field);
-        if (fieldValue instanceof Long) {
-            contentValues.put(key, Long.valueOf(fieldValue.toString()));
-        } else if (fieldValue instanceof String) {
-            contentValues.put(key, (String) fieldValue);
-        } else if (fieldValue instanceof Integer) {
-            contentValues.put(key, (Integer) fieldValue);
-        } else if (fieldValue instanceof Float) {
-            contentValues.put(key, (Float) fieldValue);
-        } else if (fieldValue instanceof Short) {
-            contentValues.put(key, (Short) fieldValue);
-        } else if (fieldValue instanceof Double) {
-            contentValues.put(key, (Double) fieldValue);
-        } else
-        {
-            Column column = getColumn( field);
-
-            if ( column.isReference() )
-            {
-                contentValues.put(key, ((TableBase) fieldValue).getId());
-            }
-            else
-            {
-                // Byte, Byte[] and Boolean are currently not supported
-                Log.w(LOGTAG, "Ignoring field - unsupported datatype: " + field);
-            }
-        }
-    }
-
-    public long insert( SQLiteDatabase db) {
-        if ( getId() != null )
-        {
-            throw new IllegalStateException( "id is already set. This object cannot be inserted");
+    public long insert(SQLiteDatabase db) {
+        if (getId() != null) {
+            throw new IllegalStateException( "id: "+ getId() + " is already set. This object cannot be inserted");
         }
 
         try {
             ContentValues values = getFilledContentValues();
-            long id = db.insert( getTableName(), null, values);
-            setId( id);
+            long id = db.insert(getTableName(), null, values);
+            setId(id);
             Log.i(LOGTAG, "Inserted entity - id: " + id);
             return id;
         } catch (IllegalAccessException e) {
@@ -271,7 +264,7 @@ abstract class TableBase  {
         return -1;
     }
 
-    public void delete( SQLiteDatabase db) {
+    public void delete(SQLiteDatabase db) {
         String idAsString = Long.toString(getId());
         db.delete(
                 getTableName(),
@@ -279,5 +272,4 @@ abstract class TableBase  {
                 new String[] { idAsString });
         Log.i(LOGTAG, "Deleted entity - id: " + idAsString);
     }
-
 }

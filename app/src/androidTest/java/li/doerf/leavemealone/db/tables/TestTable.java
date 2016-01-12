@@ -1,5 +1,12 @@
 package li.doerf.leavemealone.db.tables;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import java.lang.reflect.Field;
+import java.util.Map;
+
 import li.doerf.leavemealone.db.annotations.Column;
 import li.doerf.leavemealone.db.annotations.Table;
 
@@ -10,21 +17,22 @@ import li.doerf.leavemealone.db.annotations.Table;
 public class TestTable extends TableBase {
 
     @Column(name = "_id", type = "INTEGER", isPrimaryKey = true, isAutoincrement = true)
-    public long id;
+    public Long id;
 
-    @Column(name = "name", type = "TEXT")
-    public String name;
+    @Column(name = "name0", type = "TEXT")
+    public String name0;
 
-    @Column(name = "android", type = "INTEGER")
-    public String android;
-
-    @Override
-    public Long getId() {
-        return id;
-    }
+    @Column(name = "name1", type = "INTEGER")
+    public Short name1;
 
     @Override
-    public void setId(Long anId) {
-        id = anId;
+    public Long getId() { return id; }
+
+    @Override
+    public void setId(Long anId) { id = anId; }
+
+    @Override
+    protected TableBase getReference(SQLiteDatabase db, String aReferenceName, Long anId) {
+        return null;
     }
 }

@@ -49,8 +49,8 @@ public class BlockedNumbersAdapter extends RecyclerViewCursorAdapter<RecyclerVie
             cardView.setBackgroundColor( getContext().getResources().getColor( R.color.cardview_light_background));
         }
 
-
-        PhoneNumber number = PhoneNumber.create(aCursor);
+        SQLiteDatabase db = AloneSQLiteHelper.getInstance( getContext()).getReadableDatabase();
+        PhoneNumber number = PhoneNumber.create(db, aCursor);
 
         TextView numberView = (TextView) cardView.findViewById(R.id.number);
         numberView.setText( number.getNumber());
@@ -59,7 +59,7 @@ public class BlockedNumbersAdapter extends RecyclerViewCursorAdapter<RecyclerVie
         nameView.setText( number.getName());
 
         TextView sourceView = (TextView) cardView.findViewById(R.id.source);
-        sourceView.setText( number.getSource());
+        sourceView.setText( number.getSource().getName());
 
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,18 +90,17 @@ public class BlockedNumbersAdapter extends RecyclerViewCursorAdapter<RecyclerVie
 
     public void deleteSelectedItems() {
         List<PhoneNumber> numbersToDelete = Lists.newArrayList();
+        SQLiteDatabase db = AloneSQLiteHelper.getInstance( getContext()).getWritableDatabase();
         Cursor cursor = getCursor();
-
-        for ( int i : myMultiSelector.getSelectedPositions()) {
+        for (int i : myMultiSelector.getSelectedPositions()) {
             cursor.moveToPosition(i);
-            PhoneNumber n = PhoneNumber.create( cursor);
+            PhoneNumber n = PhoneNumber.create(db, cursor);
             numbersToDelete.add(n);
         }
 
         resetSelectedItems();
 
-        SQLiteDatabase db = AloneSQLiteHelper.getInstance( getContext()).getWritableDatabase();
-        for ( PhoneNumber num : numbersToDelete ) {
+        for (PhoneNumber num : numbersToDelete ) {
             Log.d(LOGTAG, "Deleting " + num.getNumber());
             num.delete(db);
         }

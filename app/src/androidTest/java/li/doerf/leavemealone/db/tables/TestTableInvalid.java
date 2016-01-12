@@ -1,5 +1,7 @@
 package li.doerf.leavemealone.db.tables;
 
+import android.database.sqlite.SQLiteDatabase;
+
 import li.doerf.leavemealone.db.annotations.Column;
 
 /**
@@ -23,7 +25,10 @@ public class TestTableInvalid extends TableBase {
     }
 
     @Override
-    public void setId(Long anId) {
+    public void setId(Long anId) { }
 
+    @Override
+    protected TableBase getReference(SQLiteDatabase db, String aReferenceName, Long anId) {
+        return null;
     }
 }

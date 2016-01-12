@@ -8,6 +8,7 @@ import android.util.Log;
 
 import li.doerf.leavemealone.R;
 import li.doerf.leavemealone.util.NotificationHelper;
+import li.doerf.leavemealone.util.SynchronizationHelper;
 
 /**
  * Created by moo on 01/12/15.
@@ -45,6 +46,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 getString(R.string.pref_key_only_allow_contacts).equals( key)
                 ) {
             NotificationHelper.setNotificationOnlyFromContacts( getActivity().getBaseContext());
+        }
+
+        if ( getString(R.string.pref_key_sync_enable).equals( key) ||
+                getString( R.string.pref_key_sync_interval).equals( key)
+                ) {
+            SynchronizationHelper.scheduleSync( getActivity().getApplicationContext());
         }
     }
 }

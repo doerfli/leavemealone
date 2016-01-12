@@ -1,9 +1,15 @@
 package li.doerf.leavemealone;
 
+import android.app.AlarmManager;
 import android.app.Application;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import li.doerf.leavemealone.db.AloneSQLiteHelper;
+import li.doerf.leavemealone.db.tables.PhoneNumber;
+import li.doerf.leavemealone.services.KtippBlocklistRetrievalService;
 import li.doerf.leavemealone.util.NotificationHelper;
 
 /**
@@ -17,7 +23,6 @@ public class LeaveMeAloneApplication extends Application {
     public void onCreate() {
         Log.v(LOGTAG, "Application onCreate");
         super.onCreate();
-        NotificationHelper.resetNotificationOnlyFromContacts(getBaseContext());
     }
 
     @Override

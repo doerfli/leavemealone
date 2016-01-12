@@ -20,6 +20,7 @@ import org.joda.time.DateTime;
 import li.doerf.leavemealone.R;
 import li.doerf.leavemealone.db.AloneSQLiteHelper;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
+import li.doerf.leavemealone.db.tables.PhoneNumberSource;
 import li.doerf.leavemealone.util.PhoneNumberHelper;
 
 /**
@@ -68,7 +69,7 @@ public class AddNumberDialogFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         myNumber = ((EditText) view.findViewById(R.id.number)).getText().toString();
-                        myNumber = PhoneNumberHelper.normalize(myNumber);
+                        myNumber = PhoneNumberHelper.normalize(getContext(), myNumber);
                         myName = ((EditText) view.findViewById(R.id.name)).getText().toString();
                         addPhoneNumberToDb(myNumber, myName);
                     }
@@ -92,7 +93,7 @@ public class AddNumberDialogFragment extends DialogFragment {
                     // validate entered number and set
                     String number = ((EditText) v).getText().toString();
                     Log.d( LOGTAG, "validating number: " + number);
-                    boolean isValid = PhoneNumberHelper.isValid(number);
+                    boolean isValid = PhoneNumberHelper.isValid(getContext(), number);
                     Button buttonNo = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
                     buttonNo.setEnabled(isValid);
                 }
@@ -124,7 +125,8 @@ public class AddNumberDialogFragment extends DialogFragment {
         }
 
         SQLiteDatabase db = AloneSQLiteHelper.getInstance(getContext()).getWritableDatabase();
-        PhoneNumber number = PhoneNumber.create( "manual", aNumber, name, DateTime.now());
+        PhoneNumberSource source = PhoneNumberSource.update(db, "manual");
+        PhoneNumber number = PhoneNumber.create(source, aNumber, name, DateTime.now());
         number.insert(db);
         myListener.numberAdded(number);
     }
