@@ -39,6 +39,10 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String state = intent.getExtras().getString(TelephonyManager.EXTRA_STATE);
         String incomingNumber = PhoneNumberHelper.normalize(context, intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER));
+//        Log.v(LOGTAG, "reveived state change. state: "
+//                + state
+//                + ". number: "
+//                + incomingNumber);
 
         if (myIsRingingFrom != null && myIsRingingFrom.equals( incomingNumber)) {
             // already ringing
@@ -64,7 +68,11 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
         myIsRingingFrom = incomingNumber;
 
-        checkNumber(context, incomingNumber);
+        try {
+            checkNumber(context, incomingNumber);
+        } finally {
+            myIsRingingFrom = null;
+        }
     }
 
     /**
