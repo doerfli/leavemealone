@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!-- get intent on reboot -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- get intent on reboot -->
+    <uses-permission android:name="android.permission.RECEIV" />
     <!-- access to online ktipp blacklist -->
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -44,6 +46,10 @@
         <receiver android:name=".receiver.BootupCompleteReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <data android:scheme="package"  />
             </intent-filter>
         </receiver>
         <service android:name=".services.KtippBlocklistRetrievalService" >

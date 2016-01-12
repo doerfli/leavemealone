@@ -23,7 +23,6 @@ public class LeaveMeAloneApplication extends Application {
     public void onCreate() {
         Log.v(LOGTAG, "Application onCreate");
         super.onCreate();
-        NotificationHelper.resetNotificationOnlyFromContacts(getBaseContext());
     }
 
     @Override

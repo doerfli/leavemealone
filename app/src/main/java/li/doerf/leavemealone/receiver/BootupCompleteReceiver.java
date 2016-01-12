@@ -18,8 +18,15 @@ public class BootupCompleteReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(LOGTAG, "check if notification needs to be set after reboot");
-        NotificationHelper.resetNotificationOnlyFromContacts(context);
-        SynchronizationHelper.scheduleSync(context);
+        if ( intent.getAction().equals( Intent.ACTION_BOOT_COMPLETED)) {
+            Log.d(LOGTAG, "checking app status after ACTION_BOOT_COMPLETED");
+            NotificationHelper.resetNotificationOnlyFromContacts(context);
+            SynchronizationHelper.scheduleSync(context);
+        } else if ( intent.getAction().equals( Intent.ACTION_PACKAGE_REPLACED)) {
+            Log.d(LOGTAG, "checking app status after ACTION_PACKAGE_REPLACED");
+            NotificationHelper.resetNotificationOnlyFromContacts(context);
+            SynchronizationHelper.scheduleSync(context);
+        }
+
     }
 }
