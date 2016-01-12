@@ -109,4 +109,23 @@ public class NotificationHelper {
         }
         setNotificationOnlyFromContacts( aContext);
     }
+
+    public static int showSyncingNotification(Context aContext) {
+        android.support.v4.app.NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder( aContext)
+                        .setSmallIcon(R.drawable.ic_sync_white_48dp)
+                        .setContentTitle("Syncing K-Tipp blocklist");
+        Notification notification = mBuilder.build();
+
+        notification.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
+        int notificationId = NotificationHelper.notify(aContext, notification);
+        Log.d( LOGTAG, "issued notification: " + notificationId);
+        return notificationId;
+    }
+
+    public static void hideSyncingNotification( Context aContext, int aNotificationId) {
+        NotificationManager notificationManager =
+                (NotificationManager) aContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(aNotificationId);
+    }
 }

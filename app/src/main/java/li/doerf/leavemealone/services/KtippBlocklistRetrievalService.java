@@ -33,6 +33,7 @@ import li.doerf.leavemealone.db.AloneSQLiteHelper;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
 import li.doerf.leavemealone.db.tables.PhoneNumberSource;
 import li.doerf.leavemealone.db.tables.Property;
+import li.doerf.leavemealone.util.NotificationHelper;
 import li.doerf.leavemealone.util.PhoneNumberHelper;
 
 //import android.support.annotation.Nullable; // does not compile for me
@@ -52,6 +53,19 @@ public class KtippBlocklistRetrievalService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(LOGTAG, "onHandleIntent");
+        int notificationId = 0;
+
+        try {
+            notificationId = NotificationHelper.showSyncingNotification( getBaseContext());
+            doSync();
+        } finally {
+            NotificationHelper.hideSyncingNotification(getBaseContext(), notificationId);
+        }
+    }
+
+
+
+    private void doSync() {
         Context context = getBaseContext();
         SQLiteDatabase db;
 
