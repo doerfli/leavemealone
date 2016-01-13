@@ -36,10 +36,11 @@ import li.doerf.leavemealone.db.tables.Property;
 import li.doerf.leavemealone.util.NotificationHelper;
 import li.doerf.leavemealone.util.PhoneNumberHelper;
 
-//import android.support.annotation.Nullable; // does not compile for me
-
 /**
  * Service to download the K-Tipp Blocklist and store into database.
+ *
+ * See:
+ * https://www.ktipp.ch/service/warnlisten/detail/w/unerwuenschte-oder-laestige-telefonanrufe/
  *
  * Created by pamapa on 15/12/15.
  */
@@ -87,7 +88,7 @@ public class KtippBlocklistRetrievalService extends IntentService {
             List<Map<String, String>> result = parsePages(content);
             //Log.d(LOGTAG, "raw result: " + result);
 
-            result = cleanupEntries(result);
+            result = cleanupEntries(context, result);
             //Log.d(LOGTAG, "cleaned result size: " + result.size());
             //Log.d(LOGTAG, "cleaned result: " + result);
 
@@ -115,13 +116,13 @@ public class KtippBlocklistRetrievalService extends IntentService {
         }
     }
 
-    private List<Map<String,String>> cleanupEntries(List<Map<String,String>> in) {
+    private List<Map<String,String>> cleanupEntries(Context context, List<Map<String,String>> in) {
         ArrayList<Map<String,String>> uniq = new ArrayList<>();
         Set<String> seen = new HashSet<>();
         for (Map<String,String> map : in) {
             String n = map.get("number");
 
-            n = PhoneNumberHelper.normalize(getApplicationContext(), n);
+            n = PhoneNumberHelper.normalize(context, n);
             map.put("number", n);
 
             // filter
@@ -220,7 +221,7 @@ public class KtippBlocklistRetrievalService extends IntentService {
             }
             else {
                 a = extractNumber(a);
-                if ("".equals(a)) ret.add(a);
+                if (!"".equals(a)) ret.add(a);
             }
         }
         return ret;
