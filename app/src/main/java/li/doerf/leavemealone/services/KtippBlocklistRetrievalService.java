@@ -56,7 +56,7 @@ public class KtippBlocklistRetrievalService extends IntentService {
         int notificationId = 0;
 
         try {
-            notificationId = NotificationHelper.showSyncingNotification( getBaseContext());
+            notificationId = NotificationHelper.showSyncingNotification(getBaseContext());
             doSync();
         } finally {
             NotificationHelper.hideSyncingNotification(getBaseContext(), notificationId);
@@ -108,7 +108,7 @@ public class KtippBlocklistRetrievalService extends IntentService {
 //            db.setTransactionSuccessful();
             // TODO update ui when sync complete
         } catch (IOException e) {
-            Log.e( LOGTAG, "caught IOException", e);
+            Log.e(LOGTAG, "caught IOException", e);
         } finally {
 //            db.endTransaction();
             Log.d(LOGTAG, "finished");
@@ -121,7 +121,7 @@ public class KtippBlocklistRetrievalService extends IntentService {
         for (Map<String,String> map : in) {
             String n = map.get("number");
 
-            n = PhoneNumberHelper.normalize( getApplicationContext(), n);
+            n = PhoneNumberHelper.normalize(getApplicationContext(), n);
             map.put("number", n);
 
             // filter
@@ -304,7 +304,7 @@ public class KtippBlocklistRetrievalService extends IntentService {
             }
             in.close();
         } catch(MalformedURLException e) {
-            Log.e( LOGTAG, "caught MalformedURLException", e);
+            Log.e(LOGTAG, "caught MalformedURLException", e);
         }
         return ret.toString();
     }

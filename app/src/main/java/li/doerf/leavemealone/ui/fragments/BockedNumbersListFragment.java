@@ -34,13 +34,13 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
     private SQLiteDatabase myReadbableDb;
     private boolean myShowListMultiselectModeMenu = false;
 
-    public static BockedNumbersListFragment newInstance( String[] aFilteredSources) {
+    public static BockedNumbersListFragment newInstance(String[] aFilteredSources) {
         BockedNumbersListFragment f = new BockedNumbersListFragment();
-        f.setFilteredSources( aFilteredSources);
+        f.setFilteredSources(aFilteredSources);
         return f;
     }
 
-    public void setFilteredSources( String[] aFilteredSources) {
+    public void setFilteredSources(String[] aFilteredSources) {
         myFilteredSources = aFilteredSources;
     }
 
@@ -49,7 +49,7 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         myReadbableDb = AloneSQLiteHelper.getInstance(getContext()).getReadableDatabase();
-        myBlockedNumbersAdapter = new BlockedNumbersAdapter( getContext(), null, this, this);
+        myBlockedNumbersAdapter = new BlockedNumbersAdapter(getContext(), null, this, this);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if ( id == R.id.action_delete) {
+        if (id == R.id.action_delete) {
             Log.i(LOGTAG, "delete items selected");
             myBlockedNumbersAdapter.deleteSelectedItems();
             return true;
@@ -125,12 +125,12 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
     @Override
     public void itemsDeleted() {
         refreshList();
-        Snackbar.make( getView(), getString(R.string.numbers_deleted), Snackbar.LENGTH_LONG).show();
+        Snackbar.make(getView(), getString(R.string.numbers_deleted), Snackbar.LENGTH_LONG).show();
     }
 
     public void backButtonPressed() {
-        Log.d( LOGTAG, "got backButtonPressed");
-        if ( myShowListMultiselectModeMenu ) {
+        Log.d(LOGTAG, "got backButtonPressed");
+        if (myShowListMultiselectModeMenu) {
             myShowListMultiselectModeMenu = false;
         }
         getActivity().supportInvalidateOptionsMenu();

@@ -22,7 +22,7 @@ public class PhoneNumberHelper {
      * @return e164 phone number string
      */
     public static String normalize(Context context, String aNumber) {
-        if ( aNumber == null ) { return null; }
+        if (aNumber == null) { return null; }
 
         PhoneNumberUtil pnu = PhoneNumberUtil.getInstance();
         Locale locale = context.getResources().getConfiguration().locale;
@@ -39,7 +39,7 @@ public class PhoneNumberHelper {
     }
 
     public static boolean isValid(Context context, String aNumber) {
-        if ( aNumber == null ) { return false; }
+        if (aNumber == null) { return false; }
 
         PhoneNumberUtil pnu = PhoneNumberUtil.getInstance();
         Locale locale = context.getResources().getConfiguration().locale;
@@ -47,9 +47,9 @@ public class PhoneNumberHelper {
         Phonenumber.PhoneNumber swissNumberProto;
         try {
             swissNumberProto = pnu.parse(aNumber, countryIso);
-            return pnu.isValidNumber( swissNumberProto);
+            return pnu.isValidNumber(swissNumberProto);
         } catch (NumberParseException e) {
-            Log.w( LOGTAG, "caught NumberParseException", e);
+            Log.w(LOGTAG, "caught NumberParseException", e);
             return false;
         }
     }

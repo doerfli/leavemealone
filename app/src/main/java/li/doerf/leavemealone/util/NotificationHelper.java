@@ -27,7 +27,7 @@ public class NotificationHelper {
         return notifyId.incrementAndGet();
     }
 
-    public static int notify( Context aContext, Notification aNotification) {
+    public static int notify(Context aContext, Notification aNotification) {
         // Sets an ID for the notification
         int notificationId = NotificationHelper.getNotificationId();
         // Gets an instance of the NotificationManager service
@@ -48,7 +48,7 @@ public class NotificationHelper {
      *
      * @param aContext the application context
      */
-    public static void setNotificationOnlyFromContacts( Context aContext) {
+    public static void setNotificationOnlyFromContacts(Context aContext) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(aContext);
 
         boolean isMasterSwitchSet = settings.getBoolean(
@@ -57,21 +57,21 @@ public class NotificationHelper {
                 aContext.getString(R.string.pref_key_always_allow_contacts), false);
         boolean isOnlyAllowContacts = settings.getBoolean(
                 aContext.getString(R.string.pref_key_only_allow_contacts), false);
-        Log.d( LOGTAG, "isMasterSwitchSet: " + isMasterSwitchSet);
-        Log.d( LOGTAG, "isAlwaysAllowContacts: " + isAlwaysAllowContacts);
+        Log.d(LOGTAG, "isMasterSwitchSet: " + isMasterSwitchSet);
+        Log.d(LOGTAG, "isAlwaysAllowContacts: " + isAlwaysAllowContacts);
         Log.d(LOGTAG, "isOnlyAllowContacts: " + isOnlyAllowContacts);
 
         int notificationId = settings.getInt(PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, -1);
         NotificationManager notificationManager =
                 (NotificationManager) aContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        if ( isMasterSwitchSet && isAlwaysAllowContacts && isOnlyAllowContacts ) {
-            if ( notificationId > -1 ) {
+        if (isMasterSwitchSet && isAlwaysAllowContacts && isOnlyAllowContacts) {
+            if (notificationId > -1) {
                 return;
             }
 
             android.support.v4.app.NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder( aContext)
+                    new NotificationCompat.Builder(aContext)
                             .setSmallIcon(R.drawable.ic_contact_phone_white_48dp)
                             .setContentTitle("Only calls from contacts allowed")
                             .setContentText("Click to open settings");
@@ -86,44 +86,44 @@ public class NotificationHelper {
             Notification notification = mBuilder.build();
 
             notification.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
-            notificationId = NotificationHelper.notify( aContext, notification);
-            Log.d( LOGTAG, "issued notification: " + notificationId);
-            settings.edit().putInt( PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, notificationId).commit();
+            notificationId = NotificationHelper.notify(aContext, notification);
+            Log.d(LOGTAG, "issued notification: " + notificationId);
+            settings.edit().putInt(PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, notificationId).commit();
         } else {
-            if ( notificationId > -1 ) {
+            if (notificationId > -1) {
                 notificationManager.cancel(notificationId);
-                Log.d( LOGTAG, "cancelled notification: " + notificationId);
-                settings.edit().putInt( PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, -1).commit();
+                Log.d(LOGTAG, "cancelled notification: " + notificationId);
+                settings.edit().putInt(PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, -1).commit();
             }
         }
     }
 
-    public static void resetNotificationOnlyFromContacts( Context aContext) {
+    public static void resetNotificationOnlyFromContacts(Context aContext) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(aContext);
         int notificationId = settings.getInt(PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, -1);
-        if ( notificationId > -1) {
+        if (notificationId > -1) {
             NotificationManager notificationManager =
                     (NotificationManager) aContext.getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel(notificationId);
-            settings.edit().putInt( NotificationHelper.PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, -1).commit();
+            settings.edit().putInt(NotificationHelper.PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, -1).commit();
         }
-        setNotificationOnlyFromContacts( aContext);
+        setNotificationOnlyFromContacts(aContext);
     }
 
     public static int showSyncingNotification(Context aContext) {
         android.support.v4.app.NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder( aContext)
+                new NotificationCompat.Builder(aContext)
                         .setSmallIcon(R.drawable.ic_sync_white_48dp)
                         .setContentTitle("Syncing K-Tipp blocklist");
         Notification notification = mBuilder.build();
 
         notification.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
         int notificationId = NotificationHelper.notify(aContext, notification);
-        Log.d( LOGTAG, "issued notification: " + notificationId);
+        Log.d(LOGTAG, "issued notification: " + notificationId);
         return notificationId;
     }
 
-    public static void hideSyncingNotification( Context aContext, int aNotificationId) {
+    public static void hideSyncingNotification(Context aContext, int aNotificationId) {
         NotificationManager notificationManager =
                 (NotificationManager) aContext.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(aNotificationId);

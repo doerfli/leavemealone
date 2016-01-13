@@ -29,7 +29,7 @@ public class TableBaseTest extends TestCase {
         {
             table.getTableName();
             Assert.fail("should throw IllegalArgumentException");
-        } catch ( IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 

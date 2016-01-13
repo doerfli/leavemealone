@@ -41,17 +41,15 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Log.d(LOGTAG, "preference changed: " + key);
 
-        if ( getString(R.string.pref_key_master_switch).equals( key) ||
-                getString(R.string.pref_key_always_allow_contacts).equals( key) ||
-                getString(R.string.pref_key_only_allow_contacts).equals( key)
-                ) {
-            NotificationHelper.setNotificationOnlyFromContacts( getActivity().getBaseContext());
+        if (getString(R.string.pref_key_master_switch).equals(key) ||
+                getString(R.string.pref_key_always_allow_contacts).equals(key) ||
+                getString(R.string.pref_key_only_allow_contacts).equals(key)) {
+            NotificationHelper.setNotificationOnlyFromContacts(getActivity().getBaseContext());
         }
 
-        if ( getString(R.string.pref_key_sync_enable).equals( key) ||
-                getString( R.string.pref_key_sync_interval).equals( key)
-                ) {
-            SynchronizationHelper.scheduleSync( getActivity().getApplicationContext());
+        if (getString(R.string.pref_key_sync_enable).equals(key) ||
+                getString(R.string.pref_key_sync_interval).equals(key)) {
+            SynchronizationHelper.scheduleSync(getActivity().getApplicationContext());
         }
     }
 }

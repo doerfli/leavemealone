@@ -113,10 +113,10 @@ public class PhoneNumber extends TableBase {
         String whereString = null;
         String[] whereParams = null;
 
-        if ( aExcludedSources.length > 0) {
+        if (aExcludedSources.length > 0) {
             whereParams = new String[aExcludedSources.length];
 
-            for ( int i = 0; i < aExcludedSources.length; i++) {
+            for (int i = 0; i < aExcludedSources.length; i++) {
                 PhoneNumberSource source = PhoneNumberSource.findByName(db, aExcludedSources[i]);
                 String sourceId = "";
                 if (source != null) {

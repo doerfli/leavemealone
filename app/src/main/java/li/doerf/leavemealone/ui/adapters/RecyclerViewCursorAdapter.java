@@ -16,7 +16,7 @@ public abstract class RecyclerViewCursorAdapter<VH extends RecyclerView.ViewHold
     private boolean mDataValid;
     private Context myContext;
 
-    public RecyclerViewCursorAdapter( Context aContext, Cursor aCursor)
+    public RecyclerViewCursorAdapter(Context aContext, Cursor aCursor)
     {
         myContext = aContext;
         myCursor = aCursor;
@@ -26,21 +26,21 @@ public abstract class RecyclerViewCursorAdapter<VH extends RecyclerView.ViewHold
 
     @Override
     public void onBindViewHolder(VH holder, int position) {
-        if ( myCursor == null )
+        if (myCursor == null)
         {
             Log.w(LOGTAG, "no cursor, cannnot bind. ");
             return;
         }
 
-        myCursor.moveToPosition( position);
-        onBindViewHolder( holder, myCursor);
+        myCursor.moveToPosition(position);
+        onBindViewHolder(holder, myCursor);
     }
 
     public abstract void onBindViewHolder(VH holder, Cursor myCursor);
 
     @Override
     public int getItemCount() {
-        if ( myCursor == null )
+        if (myCursor == null)
         {
             return 0;
         }
@@ -51,7 +51,7 @@ public abstract class RecyclerViewCursorAdapter<VH extends RecyclerView.ViewHold
     @Override
     public long getItemId(int position) {
         if (mDataValid && myCursor != null && myCursor.moveToPosition(position)) {
-            return myCursor.getLong( myCursor.getColumnIndex( "_id"));
+            return myCursor.getLong(myCursor.getColumnIndex("_id"));
         }
 
         return 0;

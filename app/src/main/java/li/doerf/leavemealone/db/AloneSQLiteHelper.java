@@ -20,9 +20,9 @@ public class AloneSQLiteHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "alone.db";
     private final String LOGTAG = getClass().getSimpleName();
 
-    public static AloneSQLiteHelper getInstance( Context aContext) {
-        if (myInstance == null ) {
-            myInstance = new AloneSQLiteHelper( aContext);
+    public static AloneSQLiteHelper getInstance(Context aContext) {
+        if (myInstance == null) {
+            myInstance = new AloneSQLiteHelper(aContext);
         }
         return myInstance;
     }

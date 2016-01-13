@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        myBockedNumbersFragment = BockedNumbersListFragment.newInstance( new String[] {"_ktipp"});
+        myBockedNumbersFragment = BockedNumbersListFragment.newInstance(new String[] {"_ktipp"});
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myBockedNumbersFragment).commit();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
-        if ( myMasterSwitch != null ) {
+        if (myMasterSwitch != null) {
             boolean masterSwitchEnabled = isMasterSwitchEnabled();
             Log.d(LOGTAG, "setting master switch: " + masterSwitchEnabled);
             myMasterSwitch.setChecked(masterSwitchEnabled);
@@ -117,19 +117,19 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent i = new Intent( getBaseContext(), SettingsActivity.class);
+            Intent i = new Intent(getBaseContext(), SettingsActivity.class);
             startActivity(i);
             return true;
         }
 
-        if ( id == R.id.action_about ) {
-            Intent i = new Intent( getBaseContext(), AboutActivity.class);
+        if (id == R.id.action_about) {
+            Intent i = new Intent(getBaseContext(), AboutActivity.class);
             startActivity(i);
             return true;
         }
 
-        if ( id == R.id.action_sync) {
-            Intent i = new Intent( getBaseContext(), KtippBlocklistRetrievalService.class);
+        if (id == R.id.action_sync) {
+            Intent i = new Intent(getBaseContext(), KtippBlocklistRetrievalService.class);
             startService(i);
             return true;
         }
@@ -144,10 +144,10 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_blocked_numbers) {
-            myBockedNumbersFragment = BockedNumbersListFragment.newInstance( new String[] {"_ktipp"});
+            myBockedNumbersFragment = BockedNumbersListFragment.newInstance(new String[] {"_ktipp"});
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myBockedNumbersFragment).commit();
         } else if (id == R.id.nav_blocked_numbers_ktipp) {
-            myBockedNumbersFragment = BockedNumbersListFragment.newInstance( new String[] {"manual"});
+            myBockedNumbersFragment = BockedNumbersListFragment.newInstance(new String[] {"manual"});
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myBockedNumbersFragment).commit();
         }
 
@@ -164,8 +164,8 @@ public class MainActivity extends AppCompatActivity
         Log.i(LOGTAG, "app master switch: " + isChecked);
 
         NotificationHelper.setNotificationOnlyFromContacts(getBaseContext());
-        String snackText = isChecked ? getString( R.string.call_blocker_enabled) : getString(R.string.call_blocker_disabled);
-        Snackbar.make( this.findViewById( android.R.id.content), snackText, Snackbar.LENGTH_LONG).show();
+        String snackText = isChecked ? getString(R.string.call_blocker_enabled) : getString(R.string.call_blocker_disabled);
+        Snackbar.make(this.findViewById(android.R.id.content), snackText, Snackbar.LENGTH_LONG).show();
     }
 
     private boolean isMasterSwitchEnabled() {

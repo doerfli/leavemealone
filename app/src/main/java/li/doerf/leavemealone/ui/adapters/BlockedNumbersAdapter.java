@@ -27,8 +27,8 @@ public class BlockedNumbersAdapter extends RecyclerViewCursorAdapter<RecyclerVie
     private final AdapterModelChangedListener myItemsChangedListener;
 
     public BlockedNumbersAdapter(Context aContext, Cursor aCursor, MultiSelector.SelectableModeListener aFragmentShowing, AdapterModelChangedListener anItemsChangesListener) {
-        super( aContext, aCursor);
-        myMultiSelector = new MultiSelector( this, aFragmentShowing);
+        super(aContext, aCursor);
+        myMultiSelector = new MultiSelector(this, aFragmentShowing);
         myItemsChangedListener = anItemsChangesListener;
     }
 
@@ -43,23 +43,23 @@ public class BlockedNumbersAdapter extends RecyclerViewCursorAdapter<RecyclerVie
     public void onBindViewHolder(final RecyclerViewHolder holder, Cursor aCursor) {
         CardView cardView = (CardView) holder.getView();
 
-        if ( myMultiSelector.isSelectable() && myMultiSelector.isItemChecked( holder.getAdapterPosition())) {
-            cardView.setBackgroundColor( getContext().getResources().getColor( R.color.colorAccent));
+        if (myMultiSelector.isSelectable() && myMultiSelector.isItemChecked(holder.getAdapterPosition())) {
+            cardView.setBackgroundColor(getContext().getResources().getColor(R.color.colorAccent));
         } else {
-            cardView.setBackgroundColor( getContext().getResources().getColor( R.color.cardview_light_background));
+            cardView.setBackgroundColor(getContext().getResources().getColor(R.color.cardview_light_background));
         }
 
-        SQLiteDatabase db = AloneSQLiteHelper.getInstance( getContext()).getReadableDatabase();
+        SQLiteDatabase db = AloneSQLiteHelper.getInstance(getContext()).getReadableDatabase();
         PhoneNumber number = PhoneNumber.create(db, aCursor);
 
         TextView numberView = (TextView) cardView.findViewById(R.id.number);
-        numberView.setText( number.getNumber());
+        numberView.setText(number.getNumber());
 
         TextView nameView = (TextView) cardView.findViewById(R.id.name);
-        nameView.setText( number.getName());
+        nameView.setText(number.getName());
 
         TextView sourceView = (TextView) cardView.findViewById(R.id.source);
-        sourceView.setText( number.getSource().getName());
+        sourceView.setText(number.getSource().getName());
 
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,7 +90,7 @@ public class BlockedNumbersAdapter extends RecyclerViewCursorAdapter<RecyclerVie
 
     public void deleteSelectedItems() {
         List<PhoneNumber> numbersToDelete = Lists.newArrayList();
-        SQLiteDatabase db = AloneSQLiteHelper.getInstance( getContext()).getWritableDatabase();
+        SQLiteDatabase db = AloneSQLiteHelper.getInstance(getContext()).getWritableDatabase();
         Cursor cursor = getCursor();
         for (int i : myMultiSelector.getSelectedPositions()) {
             cursor.moveToPosition(i);
@@ -100,7 +100,7 @@ public class BlockedNumbersAdapter extends RecyclerViewCursorAdapter<RecyclerVie
 
         resetSelectedItems();
 
-        for (PhoneNumber num : numbersToDelete ) {
+        for (PhoneNumber num : numbersToDelete) {
             Log.d(LOGTAG, "Deleting " + num.getNumber());
             num.delete(db);
         }

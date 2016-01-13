@@ -44,7 +44,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 //                + ". number: "
 //                + incomingNumber);
 
-        if (myIsRingingFrom != null && myIsRingingFrom.equals( incomingNumber)) {
+        if (myIsRingingFrom != null && myIsRingingFrom.equals(incomingNumber)) {
             // already ringing
             return;
         }
@@ -60,7 +60,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             return;
         }
 
-        if (!TelephonyManager.EXTRA_STATE_RINGING.equals( state)) {
+        if (!TelephonyManager.EXTRA_STATE_RINGING.equals(state)) {
             myIsRingingFrom = null;
             // we are not interested if its not ringing
             return;
@@ -82,19 +82,19 @@ public class IncomingCallReceiver extends BroadcastReceiver {
      * @param incomingNumber the number to check
      */
     private void checkNumber(Context context, String incomingNumber) {
-        if (!isMasterSwitchEnabled( context)) {
-            Log.d( LOGTAG, "call blocked disabled");
+        if (!isMasterSwitchEnabled(context)) {
+            Log.d(LOGTAG, "call blocked disabled");
             return;
         }
 
-        if (isAlwaysAllowContacts(context) ) {
-            if (isNumberInContacts( context, incomingNumber)) {
-                Log.i( LOGTAG, "number in contacts");
+        if (isAlwaysAllowContacts(context)) {
+            if (isNumberInContacts(context, incomingNumber)) {
+                Log.i(LOGTAG, "number in contacts");
                 return;
             }
 
-            if (isOnlyAllowContacts( context)) {
-                Log.i( LOGTAG, "number not in contacts");
+            if (isOnlyAllowContacts(context)) {
+                Log.i(LOGTAG, "number not in contacts");
                 hangupCall(context, incomingNumber, "Caller not in contats");
                 return;
             }
@@ -103,7 +103,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         SQLiteDatabase readableDb = AloneSQLiteHelper.getInstance(context).getReadableDatabase();
         PhoneNumber number = PhoneNumber.findByNumber(readableDb, incomingNumber);
         if (number != null) {
-            Log.i( LOGTAG, "number in list of blocked numbers");
+            Log.i(LOGTAG, "number in list of blocked numbers");
             hangupCall(context, incomingNumber, number.getName());
         } else {
             Log.d(LOGTAG, "no matching number found");
@@ -115,9 +115,9 @@ public class IncomingCallReceiver extends BroadcastReceiver {
      * @param aContext
      * @return <code>true</code> if the master switch is enabled and number should be blocked, <code>false</code> otherwise.
      */
-    public boolean isMasterSwitchEnabled( Context aContext) {
+    public boolean isMasterSwitchEnabled(Context aContext) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(aContext);
-        return settings.getBoolean( aContext.getString(R.string.pref_key_master_switch), false);
+        return settings.getBoolean(aContext.getString(R.string.pref_key_master_switch), false);
     }
 
     /**
@@ -125,9 +125,9 @@ public class IncomingCallReceiver extends BroadcastReceiver {
      * @param aContext
      * @return
      */
-    public boolean isAlwaysAllowContacts( Context aContext) {
+    public boolean isAlwaysAllowContacts(Context aContext) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(aContext);
-        return settings.getBoolean( aContext.getString(R.string.pref_key_always_allow_contacts), false);
+        return settings.getBoolean(aContext.getString(R.string.pref_key_always_allow_contacts), false);
     }
 
     /**
@@ -135,12 +135,12 @@ public class IncomingCallReceiver extends BroadcastReceiver {
      * @param aContext
      * @return <code>true</code> if the master switch is enabled and number should be blocked, <code>false</code> otherwise.
      */
-    public boolean isOnlyAllowContacts( Context aContext) {
+    public boolean isOnlyAllowContacts(Context aContext) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(aContext);
-        return settings.getBoolean( aContext.getString(R.string.pref_key_only_allow_contacts), false);
+        return settings.getBoolean(aContext.getString(R.string.pref_key_only_allow_contacts), false);
     }
 
-    public boolean isNumberInContacts( Context aContext, String number) {
+    public boolean isNumberInContacts(Context aContext, String number) {
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
 
         ContentResolver contentResolver = aContext.getContentResolver();
@@ -171,16 +171,16 @@ public class IncomingCallReceiver extends BroadcastReceiver {
      */
     private void hangupCall(Context context, String incomingNumber, String aName) {
         ICallHangup ch = new CallHangupFactory().get();
-        boolean s = ch.hangup( context);
+        boolean s = ch.hangup(context);
         Log.i(LOGTAG, "HANG UP " + incomingNumber + " successful: " + s);
-        if ( s) {
-            showNotificationCallBlocked( context, incomingNumber, aName);
+        if (s) {
+            showNotificationCallBlocked(context, incomingNumber, aName);
         }
     }
 
     private void showNotificationCallBlocked(Context aContext, String incomingNumber, String aName) {
         android.support.v4.app.NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder( aContext)
+                new NotificationCompat.Builder(aContext)
                         .setSmallIcon(R.drawable.ic_not_interested_white_24dp)
                         .setContentTitle("Call blocked")
                         .setContentText(incomingNumber + " (" + aName + ")");

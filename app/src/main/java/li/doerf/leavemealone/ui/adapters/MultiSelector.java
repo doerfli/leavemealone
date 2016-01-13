@@ -37,7 +37,7 @@ public class MultiSelector {
         mIsSelectable = selectable;
         myAdapter.notifyDataSetChanged();
         Log.d(LOGTAG, "selectable: " + selectable);
-        myFragment.selectableModeChanged( selectable);
+        myFragment.selectableModeChanged(selectable);
     }
 
     public boolean isSelectable() {
@@ -52,9 +52,9 @@ public class MultiSelector {
     public Collection<Integer> getSelectedPositions() {
         Collection<Integer> ids = Lists.newArrayList();
 
-        for ( int i = 0; i < mSelectedPositions.size(); i++) {
-            if ( mSelectedPositions.valueAt( i)) {
-                ids.add( mSelectedPositions.keyAt(i));
+        for (int i = 0; i < mSelectedPositions.size(); i++) {
+            if (mSelectedPositions.valueAt(i)) {
+                ids.add(mSelectedPositions.keyAt(i));
             }
         }
 
@@ -69,6 +69,6 @@ public class MultiSelector {
          *
          * @param aState <code>true</code> when list items are selectable, <code>false</code> otherwise.
          */
-        void selectableModeChanged( boolean aState);
+        void selectableModeChanged(boolean aState);
     }
 }

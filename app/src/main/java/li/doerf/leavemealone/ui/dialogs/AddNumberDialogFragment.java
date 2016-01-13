@@ -35,7 +35,7 @@ public class AddNumberDialogFragment extends DialogFragment {
     private NumberAddedListener myListener;
 
     public interface NumberAddedListener {
-        void numberAdded( PhoneNumber aNumber);
+        void numberAdded(PhoneNumber aNumber);
     }
 
     public void onAttach(Activity activity) {
@@ -85,14 +85,14 @@ public class AddNumberDialogFragment extends DialogFragment {
         final AlertDialog dialog = builder.create();
 
         // enable number validation on key pressed
-        EditText numberInput = (EditText) view.findViewById( R.id.number);
+        EditText numberInput = (EditText) view.findViewById(R.id.number);
         numberInput.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_UP) {
                     // validate entered number and set
                     String number = ((EditText) v).getText().toString();
-                    Log.d( LOGTAG, "validating number: " + number);
+                    Log.d(LOGTAG, "validating number: " + number);
                     boolean isValid = PhoneNumberHelper.isValid(getContext(), number);
                     Button buttonNo = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
                     buttonNo.setEnabled(isValid);
@@ -116,11 +116,11 @@ public class AddNumberDialogFragment extends DialogFragment {
     }
 
     private void addPhoneNumberToDb(String aNumber, String name) {
-        if ( aNumber == null || aNumber.trim().equals("") ) {
+        if (aNumber == null || aNumber.trim().equals("")) {
             throw new IllegalArgumentException("number not set");
         }
 
-        if ( name == null || name.trim().equals("")) {
+        if (name == null || name.trim().equals("")) {
             name = "<Not set>";
         }
 

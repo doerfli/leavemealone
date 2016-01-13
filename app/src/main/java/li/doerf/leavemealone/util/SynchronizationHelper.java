@@ -22,15 +22,15 @@ public class SynchronizationHelper {
 
     public static void scheduleSync(Context aContext) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(aContext);
-        disableSync( aContext);
-        if ( settings.getBoolean( aContext.getString( R.string.pref_key_sync_enable), false)) {
-            String intervalDesc = settings.getString( aContext.getString( R.string.pref_key_sync_interval), "onceaday") ;
+        disableSync(aContext);
+        if (settings.getBoolean(aContext.getString(R.string.pref_key_sync_enable), false)) {
+            String intervalDesc = settings.getString(aContext.getString(R.string.pref_key_sync_interval), "onceaday") ;
             enableSync(aContext, translateIntervalDesc(intervalDesc));
         }
     }
 
     private static long translateIntervalDesc(String intervalDesc) {
-        switch( intervalDesc) {
+        switch(intervalDesc) {
             case "onceaminute":
                 return 1000 * 60;
             case "onceahour":
@@ -58,13 +58,13 @@ public class SynchronizationHelper {
     }
 
     private static PendingIntent getPendingIntent(Context aContext) {
-        Intent i = new Intent( aContext, KtippBlocklistRetrievalService.class);
-        return PendingIntent.getService( aContext, 0, i, 0);
+        Intent i = new Intent(aContext, KtippBlocklistRetrievalService.class);
+        return PendingIntent.getService(aContext, 0, i, 0);
     }
 
-    private static void disableSync( Context aContext) {
+    private static void disableSync(Context aContext) {
         AlarmManager alarmManager = (AlarmManager) aContext.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel( getPendingIntent( aContext));
+        alarmManager.cancel(getPendingIntent(aContext));
         Log.i(LOGTAG, "cancelled pending intent");
     }
 }
