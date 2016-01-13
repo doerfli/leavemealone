@@ -76,9 +76,9 @@ public class KtippBlocklistRetrievalService extends IntentService {
             Log.d(LOGTAG, "source date: " + sourceDate);
 
             db = AloneSQLiteHelper.getInstance(context).getReadableDatabase();
-            Property item = Property.findByName(db, "ktipp_source_date");
+            Property item = Property.findByKey(db, "ktipp_source_date");
             if (item != null) {
-                if (item.getKey().equals(sourceDate)) {
+                if (item.getValue().equals(sourceDate)) {
                     Log.i(LOGTAG, "We already have this version: " + sourceDate);
                     return;
                 }

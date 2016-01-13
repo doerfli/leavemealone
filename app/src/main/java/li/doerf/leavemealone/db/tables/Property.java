@@ -16,25 +16,24 @@ import li.doerf.leavemealone.db.annotations.Table;
 public class Property extends TableBase {
     @Column(name = "_id", type = "INTEGER", isPrimaryKey = true, isAutoincrement = true)
     private Long id;
-    @Column(name = "name", type = "TEXT")
-    private String name;
     @Column(name = "key", type = "TEXT")
     private String key;
+    @Column(name = "value", type = "TEXT")
+    private String value;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name;}
-
     public String getKey() { return key; }
     public void setKey(String key) { this.key = key; }
 
-    public static Property create(String aName, String aKey) {
+    public String getValue() { return value; }
+    public void setValue(String value) { this.value = value;}
+
+    public static Property create(String aKey, String aValue) {
         Property property = new Property();
-        property.setName(aName);
         property.setKey(aKey);
+        property.setValue(aValue);
         return property;
     }
 
@@ -45,27 +44,29 @@ public class Property extends TableBase {
         return item;
     }
 
-    public static Property update(SQLiteDatabase db, String aName, String aKey) {
-        Property item = Property.findByName(db, aName);
-        // TODO: more efficient via db update?
+    public static Property update(SQLiteDatabase db, String aKey, String aValue) {
+        Property item = Property.findByKey(db, aKey);
         if (item != null) {
-            item.delete(db);
+            // key is already ok
+            item.setValue(aValue);
+            item.update(db);
+        } else {
+            item = Property.create(aKey, aValue);
+            item.insert(db);
         }
-        item = Property.create(aName, aKey);
-        item.insert(db);
         return item;
     }
 
-    public static Property findByName(SQLiteDatabase db, String aName) {
+    public static Property findByKey(SQLiteDatabase db, String aKey) {
         Property item = new Property();
         Cursor c = db.query(
                 item.getTableName(),
                 item.getColumnNames(),
-                "name = ?",
-                new String[] {aName},
+                "key = ?",
+                new String[] {aKey},
                 null,
                 null,
-                "name");
+                "key");
 
         if (c.moveToFirst()) {
             return Property.create(db, c);

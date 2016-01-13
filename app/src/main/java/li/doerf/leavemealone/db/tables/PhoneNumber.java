@@ -51,15 +51,13 @@ public class PhoneNumber extends TableBase {
     public String getName() {
         return name;
     }
-    public void setName(String name) {
-        this.name = name;
-    }
+    public void setName(String name) { this.name = name; }
 
     public Long getDateModified() {
         return dateModified;
     }
-    public void setDateModified(Long lastModified) {
-        this.dateModified = lastModified;
+    public void setDateModified(DateTime aLastModified) {
+        this.dateModified = aLastModified != null ? aLastModified.getMillis() : null;
     }
 
     public static PhoneNumber create(PhoneNumberSource aSource, String aNumber, String aName, DateTime aDateModified) {
@@ -67,7 +65,7 @@ public class PhoneNumber extends TableBase {
         number.setSource(aSource);
         number.setNumber(aNumber);
         number.setName(aName);
-        number.setDateModified(aDateModified != null ? aDateModified.getMillis() : null);
+        number.setDateModified(aDateModified);
         return number;
     }
 
@@ -80,12 +78,15 @@ public class PhoneNumber extends TableBase {
 
     public static PhoneNumber update(SQLiteDatabase db, PhoneNumberSource aSource, String aNumber, String aName, DateTime aDateModified) {
         PhoneNumber item = PhoneNumber.findBySourceAndNumber(db, aSource, aNumber);
-        // TODO: more efficient via db update?
         if (item != null) {
-            item.delete(db);
+            // source and number are already ok
+            item.setName(aName);
+            item.setDateModified(aDateModified);
+            item.update(db);
+        } else {
+            item = PhoneNumber.create(aSource, aNumber, aName, aDateModified);
+            item.insert(db);
         }
-        item = PhoneNumber.create(aSource, aNumber, aName, aDateModified);
-        item.insert(db);
         return item;
     }
 
