@@ -22,11 +22,11 @@ abstract class TableBase  {
     private final String LOGTAG = this.getClass().getSimpleName();
 
     public abstract Long getId();
-    public abstract void setId( Long anId);
+    public abstract void setId(Long anId);
     protected abstract TableBase getReference(SQLiteDatabase db, String aReferenceName, Long anId);
 
     protected String getTableName() {
-        if ( tableName == null ) {
+        if (tableName == null) {
             Table annotationTable = getClass().getAnnotation(Table.class);
             if (annotationTable == null) {
                 throw new IllegalArgumentException("Missing table annotation");
@@ -47,14 +47,14 @@ abstract class TableBase  {
 
             Column fieldEntityAnnotation = getColumn(field);
             if (fieldEntityAnnotation != null) {
-                if ( ! firstColumn ) {
+                if (! firstColumn) {
                     sql.append(", ");
                 }
 
                 sql.append(fieldEntityAnnotation.name());
                 sql.append(" ");
 
-                if ( fieldEntityAnnotation.isReference() )
+                if (fieldEntityAnnotation.isReference())
                 {
                     sql.append("INTEGER");
                 }
@@ -62,10 +62,10 @@ abstract class TableBase  {
                     sql.append(fieldEntityAnnotation.type());
                 }
 
-                if ( fieldEntityAnnotation.isPrimaryKey() )
+                if (fieldEntityAnnotation.isPrimaryKey())
                     sql.append(" PRIMARY KEY");
 
-                if ( fieldEntityAnnotation.isAutoincrement())
+                if (fieldEntityAnnotation.isAutoincrement())
                     sql.append(" AUTOINCREMENT");
             }
 
@@ -74,13 +74,13 @@ abstract class TableBase  {
         sql.append(");");
         String query = sql.toString();
         Log.d(LOGTAG, "SQL query: " + query);
-        db.execSQL( query);
+        db.execSQL(query);
     }
 
     public void dropTable(SQLiteDatabase db) {
         String query = String.format("DROP TABLE %s", getTableName());
         Log.d(LOGTAG, "SQL query: " + query);
-        db.execSQL( query);
+        db.execSQL(query);
     }
 
     /**
@@ -88,14 +88,14 @@ abstract class TableBase  {
      */
     protected String[] getColumnNames() {
         Map<String, Field> columnNamesWithFields = getColumnNamesWithFields();
-        return columnNamesWithFields.keySet().toArray( new String[columnNamesWithFields.size()]);
+        return columnNamesWithFields.keySet().toArray(new String[columnNamesWithFields.size()]);
     }
 
     /**
      * @return a map with the column names as keys and fields as values
      */
     protected Map<String,Field> getColumnNamesWithFields() {
-        if ( columnNamesAndFields == null ) {
+        if (columnNamesAndFields == null) {
             Map<String, Field> result = new TreeMap<>();
             for (Field field : getClass().getDeclaredFields()) {
                 String columnName = getColumnName(field);
@@ -112,14 +112,14 @@ abstract class TableBase  {
 
     protected String getPrimaryKeyColumnName() {
         Map<String, Field> columns = getColumnNamesWithFields();
-        for ( Map.Entry<String,Field> e : columns.entrySet() ) {
-            Column c = getColumn( e.getValue());
-            if ( c.isPrimaryKey()) {
+        for (Map.Entry<String,Field> e : columns.entrySet()) {
+            Column c = getColumn(e.getValue());
+            if (c.isPrimaryKey()) {
                 return e.getKey();
             }
         }
 
-        throw new IllegalStateException( "Table does not have primary key");
+        throw new IllegalStateException("Table does not have primary key");
     }
 
     private Column getColumn(Field aField) {
@@ -152,14 +152,13 @@ abstract class TableBase  {
     }
 
     // Object -> DB
-    private ContentValues getFilledContentValues() throws IllegalAccessException {
+    private ContentValues getFilledContentValues(boolean withPk) throws IllegalAccessException {
         ContentValues contentValues = new ContentValues();
         for (Field field : getClass().getDeclaredFields()) {
-            if (isColumn(field)) {
-                if (!isAutoIncrement(field)) {
-                    putInContentValues(contentValues, field, this);
-                }
-            }
+            if (!isColumn(field)) continue; // not a DB field
+            if (isAutoIncrement(field)) continue; // managed by DB
+            if (!withPk && isPrimaryKey(field)) continue;
+            putInContentValues(contentValues, field, this);
         }
         return contentValues;
     }
@@ -206,7 +205,7 @@ abstract class TableBase  {
             for (Map.Entry<String, Field> e : aColumnNamesAndFields.entrySet()) {
                 String columnName = e.getKey();
                 Field field = e.getValue();
-                field.setAccessible( true);
+                field.setAccessible(true);
                 Class<?> type = field.getType();
 
                 if (String.class.isAssignableFrom(type)) {
@@ -227,9 +226,7 @@ abstract class TableBase  {
                 } else if (Double.class.isAssignableFrom(type)) {
                     Double value = aCursor.getDouble(aCursor.getColumnIndex(columnName));
                     field.set(this, value);
-                }
-                else
-                {
+                } else {
                     Column column = getColumn(field);
                     if (column.isReference() && db != null) {
                         Long id = aCursor.getLong(aCursor.getColumnIndex(columnName));
@@ -242,29 +239,52 @@ abstract class TableBase  {
                 }
             }
         } catch (IllegalAccessException e) {
-            Log.e("PantryItem", "caught IllegalAccessException. could not insert data", e);
+            Log.e(LOGTAG, "caught IllegalAccessException during building object", e);
         }
     }
 
-    public long insert(SQLiteDatabase db) {
+    public void insert(SQLiteDatabase db) {
         if (getId() != null) {
-            throw new IllegalStateException( "id: "+ getId() + " is already set. This object cannot be inserted");
+            throw new IllegalStateException("id: "+ getId() + " is already set. This object cannot be inserted");
         }
 
         try {
-            ContentValues values = getFilledContentValues();
-            long id = db.insert(getTableName(), null, values);
+            ContentValues values = getFilledContentValues(true);
+            long id = db.insert(
+                    getTableName(),
+                    null,
+                    values);
             setId(id);
             Log.i(LOGTAG, "Inserted entity - id: " + id);
-            return id;
         } catch (IllegalAccessException e) {
             Log.e(LOGTAG, "caught IllegalAccessException during insert", e);
         }
+    }
 
-        return -1;
+    public void update(SQLiteDatabase db) {
+        if (getId() == null) {
+            throw new IllegalStateException("id not set. This object cannot be updated");
+        }
+
+        try {
+            ContentValues values = getFilledContentValues(false);
+            String idAsString = Long.toString(getId());
+            db.update(
+                    getTableName(),
+                    values,
+                    getPrimaryKeyColumnName() + " = ?",
+                    new String[] { idAsString });
+            Log.i(LOGTAG, "Updated entity - id: " + idAsString);
+        } catch (IllegalAccessException e) {
+            Log.e(LOGTAG, "caught IllegalAccessException during update", e);
+        }
     }
 
     public void delete(SQLiteDatabase db) {
+        if (getId() == null) {
+            throw new IllegalStateException("id not set. This object cannot be deleted");
+        }
+
         String idAsString = Long.toString(getId());
         db.delete(
                 getTableName(),
