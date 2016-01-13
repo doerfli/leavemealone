@@ -33,7 +33,7 @@ public class PhoneNumberHelper {
 //            Log.d(LOGTAG, numberE164);
             return numberE164;
         } catch (NumberParseException e) {
-            Log.w(LOGTAG, "caught NumberParseException", e);
+            Log.w(LOGTAG, "normalize caught NumberParseException: number=" + aNumber);
             return aNumber;
         }
     }
@@ -49,7 +49,7 @@ public class PhoneNumberHelper {
             swissNumberProto = pnu.parse(aNumber, countryIso);
             return pnu.isValidNumber(swissNumberProto);
         } catch (NumberParseException e) {
-            Log.w(LOGTAG, "caught NumberParseException", e);
+            Log.w(LOGTAG, "isValid caught NumberParseException: number=" + aNumber);
             return false;
         }
     }
