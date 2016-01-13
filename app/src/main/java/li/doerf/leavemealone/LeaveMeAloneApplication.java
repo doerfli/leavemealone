@@ -19,6 +19,7 @@ import li.doerf.leavemealone.util.NotificationHelper;
 public class LeaveMeAloneApplication extends Application {
     private final String LOGTAG = getClass().getSimpleName();
     public static final int PERMISSIONS_REQUEST_READ_PHONE_STATE = 42;
+    public static final int PERMISSIONS_REQUEST_READ_CONTACTS = 43;
 
     @Override
     public void onCreate() {

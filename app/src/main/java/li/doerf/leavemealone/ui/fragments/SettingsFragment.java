@@ -86,6 +86,41 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             }
         }
 
+        if ( getString(R.string.pref_key_always_allow_contacts).equals( key) ) {
+            boolean isAlwaysAllowContacts = sharedPreferences.getBoolean(
+                    getString(R.string.pref_key_always_allow_contacts), false);
+            if ( isAlwaysAllowContacts) {
+                if (ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.READ_CONTACTS)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    Log.v(LOGTAG, "permission READ_CONTACTS denied");
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                            Manifest.permission.READ_CONTACTS)) {
+                        Log.v(LOGTAG, "show permission rationale");
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle(getString(R.string.dialog_permission_request_title))
+                                .setMessage(getString(R.string.dialog_permission_request_READ_CONTACTS_EXPLANATION))
+                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        ActivityCompat.requestPermissions(getActivity(),
+                                                new String[]{Manifest.permission.READ_CONTACTS},
+                                                LeaveMeAloneApplication.PERMISSIONS_REQUEST_READ_CONTACTS);
+                                    }
+                                }).show();
+                    } else {
+                        Log.i(LOGTAG, "request permission READ_CONTACTS");
+                        // No explanation needed, we can request the permission.
+                        ActivityCompat.requestPermissions(getActivity(),
+                                new String[]{Manifest.permission.READ_CONTACTS},
+                                LeaveMeAloneApplication.PERMISSIONS_REQUEST_READ_CONTACTS);
+                    }
+                } else {
+                    Log.v(LOGTAG, "permission READ_CONTACTS granted");
+                }
+            }
+        }
+
         handleSettingChanged(key);
     }
 

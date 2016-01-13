@@ -48,6 +48,22 @@ public class SettingsActivity extends AppCompatActivity {
                 }
                 break;
             }
+            case LeaveMeAloneApplication.PERMISSIONS_REQUEST_READ_CONTACTS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.i(LOGTAG, "permission READ_CONTACTS granted by user");
+                    mySettingsFragment.handleSettingChanged(getString(R.string.pref_key_always_allow_contacts));
+                } else {
+                    Log.i(LOGTAG, "permission READ_CONTACTS denied by user");
+                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putBoolean(getString(R.string.pref_key_always_allow_contacts), false);
+                    editor.commit();
+                    mySettingsFragment.refresh();
+                }
+                break;
+            }
         }
     }
 }
