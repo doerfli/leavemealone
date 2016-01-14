@@ -9,8 +9,6 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!-- get intent on reboot -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <!-- get intent on reboot -->
-    <uses-permission android:name="android.permission.RECEIV" />
     <!-- access to online ktipp blacklist -->
     <uses-permission android:name="android.permission.INTERNET" />
 
