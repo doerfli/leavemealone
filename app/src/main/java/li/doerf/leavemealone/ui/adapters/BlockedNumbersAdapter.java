@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.common.collect.Lists;
@@ -42,11 +43,12 @@ public class BlockedNumbersAdapter extends RecyclerViewCursorAdapter<RecyclerVie
     @Override
     public void onBindViewHolder(final RecyclerViewHolder holder, Cursor aCursor) {
         CardView cardView = (CardView) holder.getView();
+        RelativeLayout rl = (RelativeLayout) cardView.findViewById(R.id.container);
 
         if (myMultiSelector.isSelectable() && myMultiSelector.isItemChecked(holder.getAdapterPosition())) {
-            cardView.setBackgroundColor(getContext().getResources().getColor(R.color.colorAccent));
+            rl.setBackgroundColor(getContext().getResources().getColor(R.color.colorAccent));
         } else {
-            cardView.setBackgroundColor(getContext().getResources().getColor(R.color.cardview_light_background));
+            rl.setBackgroundColor(getContext().getResources().getColor(R.color.cardview_light_background));
         }
 
         SQLiteDatabase db = AloneSQLiteHelper.getInstance(getContext()).getReadableDatabase();
