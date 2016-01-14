@@ -44,9 +44,17 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 //                + ". number: "
 //                + incomingNumber);
 
-        if (myIsRingingFrom != null && myIsRingingFrom.equals(incomingNumber)) {
-            // already ringing
-            return;
+        if ( myIsRingingFrom != null ) {
+            if (TelephonyManager.EXTRA_STATE_IDLE.equals(state)){
+                // reset ringing number when state is idle
+                myIsRingingFrom = null;
+                return;
+            }
+
+            if (TelephonyManager.EXTRA_STATE_RINGING.equals(state) && myIsRingingFrom.equals(incomingNumber)) {
+                // already ringing, ignore (duplicate event)
+                return;
+            }
         }
 
         Log.d(LOGTAG, "reveived state change. state: "
@@ -68,11 +76,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
         myIsRingingFrom = incomingNumber;
 
-        try {
-            checkNumber(context, incomingNumber);
-        } finally {
-            myIsRingingFrom = null;
-        }
+        checkNumber(context, incomingNumber);
     }
 
     /**
