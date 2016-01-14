@@ -1,16 +1,11 @@
 package li.doerf.leavemealone;
 
-import android.app.AlarmManager;
 import android.app.Application;
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.util.Log;
 
 import li.doerf.leavemealone.db.AloneSQLiteHelper;
-import li.doerf.leavemealone.db.tables.PhoneNumber;
-import li.doerf.leavemealone.services.KtippBlocklistRetrievalService;
-import li.doerf.leavemealone.util.NotificationHelper;
 
 /**
  * The application
@@ -31,5 +26,15 @@ public class LeaveMeAloneApplication extends Application {
     public void onTerminate() {
         super.onTerminate();
         AloneSQLiteHelper.getInstance(getApplicationContext()).close();
+    }
+
+    public String getAppVersion() {
+        try {
+            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            return packageInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.w(LOGTAG, "exception while retrieving version", e);
+        }
+        return "Unknown";
     }
 }
