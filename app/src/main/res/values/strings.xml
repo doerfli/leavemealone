@@ -38,14 +38,14 @@
     <string name="call_blocker_disabled">Call blocker disabled</string>
     <string name="action_acount">About</string>
     <string name="about_title">License</string>
-    <string name="copyright_notice"><![CDATA[Copyright 2015 Marc Doerflinger <leavemealone@bytes.li> and Patrick Ammann <>]]></string>
+    <string name="copyright_notice"><![CDATA[Copyright 2016 Marc Doerflinger <leavemealone@bytes.li> and Patrick Ammann <pammann@gmx.net>]]></string>
     <string name="license_text">Apache License, Version 2.0, January 2004</string>
     <string name="license_details">License details: https://github.com/doerfli/leavemealone/blob/master/LICENSE.txt</string>
     <string name="contat_title">Contact</string>
     <string name="contact_text">If you have any questions, please contact us at\nleavemealone@bytes.li</string>
     <string name="support_donation_text">You can support us by making a donation at\nhttps://www.paypal.me/MarcDoerflinger</string>
     <string name="pref_title_syncronization">Synchronization</string>
-    <string name="pref_title_dialog_interval">How often should the K-Tipp list be synchronized</string>
+    <string name="pref_title_dialog_interval">How often should the K-Tipp blacklist be synchronized</string>
     <string name="pref_sync_interval_default">onceaday</string>
     <string name="ok">Ok</string>
     <string name="dialog_permission_request_title">Permission request</string>
