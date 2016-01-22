@@ -21,12 +21,9 @@ public class BootupCompleteReceiver extends BroadcastReceiver {
         if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
             Log.d(LOGTAG, "checking app status after ACTION_BOOT_COMPLETED");
             NotificationHelper.resetNotificationOnlyFromContacts(context);
-            SynchronizationHelper.scheduleSync(context);
         } else if (intent.getAction().equals(Intent.ACTION_PACKAGE_REPLACED)) {
             Log.d(LOGTAG, "checking app status after ACTION_PACKAGE_REPLACED");
             NotificationHelper.resetNotificationOnlyFromContacts(context);
-            SynchronizationHelper.scheduleSync(context);
         }
-
     }
 }

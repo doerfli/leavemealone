@@ -29,6 +29,7 @@
     <string name="pref_key_sync_interval">SyncInterval</string>
     <string name="pref_title_sync_intervale">Synchronization interval</string>
     <string name="pref_summary_sync_interval">How often will the list of blocked numbers be downloaded from K-Tipp. </string>
+    <string name="pref_key_sync_wifi">SyncWifi</string>
     <string name="number_invalid">Please enter valid number</string>
     <string name="action_delete">Delete</string>
     <string name="number_added">Number added</string>

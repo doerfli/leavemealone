@@ -11,6 +11,9 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- access to online ktipp blacklist -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- monitoring network and wifi connection state -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
     <application
         android:name=".LeaveMeAloneApplication"
@@ -50,6 +53,14 @@
                 <data android:scheme="package"  />
             </intent-filter>
         </receiver>
+        <receiver android:name=".receiver.NetworkStateChangeReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.supplicant.CONNECTION_CHANGE" />
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+            </intent-filter>
+        </receiver>
+
         <service android:name=".services.KtippBlocklistRetrievalService" >
         </service>
     </application>

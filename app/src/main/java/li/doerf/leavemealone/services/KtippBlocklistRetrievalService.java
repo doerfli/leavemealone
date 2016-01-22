@@ -1,6 +1,8 @@
 package li.doerf.leavemealone.services;
 
+import android.app.AlarmManager;
 import android.app.IntentService;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -51,6 +53,30 @@ public class KtippBlocklistRetrievalService extends IntentService {
         super("KtippBlocklistRetrievalService");
     }
 
+    public static void startService(Context aContext, long aIntervalMillis) {
+        PendingIntent ktipsync = getPendingIntent(aContext);
+
+        long triggerAtMillis = 0; // TODO
+/*
+  if (lasttime + period) > now: triggerAtMillis = (lasttime + period) - now
+  else                          triggerAtMillis = 0
+ */
+
+        AlarmManager alarmManager = (AlarmManager) aContext.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+                triggerAtMillis, aIntervalMillis, ktipsync);
+    }
+
+    public static void stopService(Context aContext) {
+        AlarmManager alarmManager = (AlarmManager) aContext.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(getPendingIntent(aContext));
+    }
+
+    private static PendingIntent getPendingIntent(Context aContext) {
+        Intent i = new Intent(aContext, KtippBlocklistRetrievalService.class);
+        return PendingIntent.getService(aContext, 0, i, 0);
+    }
+
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(LOGTAG, "onHandleIntent");
@@ -63,8 +89,6 @@ public class KtippBlocklistRetrievalService extends IntentService {
             NotificationHelper.hideSyncingNotification(getBaseContext(), notificationId);
         }
     }
-
-
 
     private void doSync() {
         Context context = getBaseContext();
