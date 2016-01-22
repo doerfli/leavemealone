@@ -136,7 +136,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 getString( R.string.pref_key_sync_interval).equals( key) ||
                 getString(R.string.pref_key_sync_wifi).equals(key)
                 ) {
-            SynchronizationHelper.handleSettingChanged(getActivity().getApplicationContext());
+            SynchronizationHelper.handleSettingsChanged(getActivity().getApplicationContext());
         }
     }
 

@@ -30,7 +30,7 @@ public class SynchronizationHelper {
         scheduleSync(aContext, isConnected, isWifi);
     }
 
-    public static void handleSettingChanged(Context aContext) {
+    public static void handleSettingsChanged(Context aContext) {
         scheduleSync(aContext, _isConnected, _isWifi);
     }
 
