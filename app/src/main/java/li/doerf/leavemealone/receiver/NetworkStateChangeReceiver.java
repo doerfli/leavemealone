@@ -28,12 +28,10 @@ public class NetworkStateChangeReceiver extends BroadcastReceiver {
                 mobile != null && mobile.isConnectedOrConnecting();
         */
 
-
         // TODO: this code is wifi depended...
 
         //WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
         NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-
 
         boolean isConnected = false;
         boolean isWifi = false;

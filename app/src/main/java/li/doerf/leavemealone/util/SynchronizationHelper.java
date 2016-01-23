@@ -37,6 +37,8 @@ public class SynchronizationHelper {
     private static void scheduleSync(Context aContext, boolean isConnected, boolean isWifi) {
         stopServices(aContext);
 
+        // TODO: verify when mast switch is off, we do not start service
+
         if (!isConnected) {
             return;
         }
