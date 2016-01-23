@@ -24,13 +24,13 @@ public class SynchronizationHelper {
     private static boolean _isConnected = false;
     private static boolean _isWifi = false;
 
-    public static void networkStateChanged(Context aContext, boolean isConnected, boolean isWifi) {
+    public static void onNetworkStateChanged(Context aContext, boolean isConnected, boolean isWifi) {
         _isConnected = isConnected;
         _isWifi = isWifi;
         scheduleSync(aContext, isConnected, isWifi);
     }
 
-    public static void handleSettingsChanged(Context aContext) {
+    public static void onSettingChanged(Context aContext) {
         scheduleSync(aContext, _isConnected, _isWifi);
     }
 

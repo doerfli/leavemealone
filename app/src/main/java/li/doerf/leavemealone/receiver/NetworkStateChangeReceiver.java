@@ -43,6 +43,6 @@ public class NetworkStateChangeReceiver extends BroadcastReceiver {
             isWifi = networkInfo.getType() == ConnectivityManager.TYPE_WIFI;
         }
         Log.d(LOGTAG, "isConnected:" + isConnected + " isWifi:" + isWifi);
-        SynchronizationHelper.networkStateChanged(aContext, isConnected, isWifi);
+        SynchronizationHelper.onNetworkStateChanged(aContext, isConnected, isWifi);
     }
 }

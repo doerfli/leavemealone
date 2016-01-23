@@ -50,11 +50,11 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Log.d(LOGTAG, "preference changed: " + key);
 
-        if ( getString(R.string.pref_key_master_switch).equals(key) ) {
+        if (getString(R.string.pref_key_master_switch).equals(key)) {
             boolean isMasterSwitchSet = sharedPreferences.getBoolean(
                     getActivity().getString(R.string.pref_key_master_switch), false);
 
-            if ( isMasterSwitchSet) {
+            if (isMasterSwitchSet) {
                 if (ContextCompat.checkSelfPermission(getActivity(),
                         Manifest.permission.READ_PHONE_STATE)
                         != PackageManager.PERMISSION_GRANTED) {
@@ -86,7 +86,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             }
         }
 
-        if ( getString(R.string.pref_key_always_allow_contacts).equals( key) ) {
+        if (getString(R.string.pref_key_always_allow_contacts).equals( key)) {
             boolean isAlwaysAllowContacts = sharedPreferences.getBoolean(
                     getString(R.string.pref_key_always_allow_contacts), false);
             if ( isAlwaysAllowContacts) {
@@ -136,7 +136,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 getString( R.string.pref_key_sync_interval).equals( key) ||
                 getString(R.string.pref_key_sync_wifi).equals(key)
                 ) {
-            SynchronizationHelper.handleSettingsChanged(getActivity().getApplicationContext());
+            SynchronizationHelper.onSettingChanged(getActivity().getApplicationContext());
         }
     }
 

@@ -30,6 +30,8 @@
     <string name="pref_title_sync_intervale">Synchronization interval</string>
     <string name="pref_summary_sync_interval">How often will the list of blocked numbers be downloaded from K-Tipp. </string>
     <string name="pref_key_sync_wifi">SyncWifi</string>
+    <string name="pref_title_sync_wifi">Only when Wifi is active</string>
+    <string name="pref_summary_sync_wifi">Synchronization is started only when Wifi is active</string>
     <string name="number_invalid">Please enter valid number</string>
     <string name="action_delete">Delete</string>
     <string name="number_added">Number added</string>
@@ -47,7 +49,6 @@
     <string name="support_donation_text">You can support us by making a donation at\nhttps://www.paypal.me/MarcDoerflinger</string>
     <string name="pref_title_syncronization">Synchronization</string>
     <string name="pref_title_dialog_interval">How often should the K-Tipp blacklist be synchronized</string>
-    <string name="pref_sync_interval_default">onceaday</string>
     <string name="ok">Ok</string>
     <string name="dialog_permission_request_title">Permission request</string>
     <string name="dialog_permission_request_READ_PHONE_STATE_EXPLANATION">This application requires access to incoming phone calls to intercept incoming calls. Without the permission "make and manage phone calls" the callblocker feature will not work. Please allow the app access to it in the next dialog.</string>

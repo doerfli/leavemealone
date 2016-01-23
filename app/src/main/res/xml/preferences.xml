@@ -17,7 +17,7 @@
             android:key="@string/pref_key_always_allow_contacts"
             android:title="@string/pref_title_always_allow_contacts"
             android:summary="@string/pref_summary_always_allow_contacts"
-            android:defaultValue="false" />
+            android:defaultValue="true" />
         <CheckBoxPreference
             android:key="@string/pref_key_only_allow_contacts"
             android:title="@string/pref_title_only_allow_contacts"
@@ -27,12 +27,19 @@
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/pref_title_syncronization"
+        android:dependency="@string/pref_key_master_switch"
         android:key="pref_key_sync">
         <CheckBoxPreference
             android:key="@string/pref_key_sync_enable"
             android:title="@string/pref_title_sync_enable"
             android:summary="@string/pref_summary_sync_enable"
             android:defaultValue="false" />
+        <CheckBoxPreference
+            android:dependency="@string/pref_key_sync_enable"
+            android:key="@string/pref_key_sync_wifi"
+            android:title="@string/pref_title_sync_wifi"
+            android:summary="@string/pref_summary_sync_wifi"
+            android:defaultValue="true" />
         <ListPreference
             android:dependency="@string/pref_key_sync_enable"
             android:key="@string/pref_key_sync_interval"
@@ -41,6 +48,6 @@
             android:dialogTitle="@string/pref_title_dialog_interval"
             android:entries="@array/pref_sync_interval_entries"
             android:entryValues="@array/pref_sync_interval_values"
-            android:defaultValue="@string/pref_sync_interval_default" />
+            android:defaultValue="onceaday" />
     </PreferenceCategory>
 </PreferenceScreen>
