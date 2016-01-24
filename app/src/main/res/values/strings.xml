@@ -58,4 +58,7 @@
     <string name="sample_entry_add_new">Add new entries thru + button</string>
     <string name="sample_entry_remove">Long-click entry to select and remove</string>
     <string name="sample_entry_sync">Select \'Synchronize\' from menu to download K-Tipp blocklist</string>
+    <string name="notificaion_syncing_blocklist_title">Syncing K-Tipp blocklist</string>
+    <string name="only_contacts_allowed_notification_title">Only calls from contacts allowed</string>
+    <string name="only_contacts_allowed_notification_subtitle">Click to open settings</string>
 </resources>

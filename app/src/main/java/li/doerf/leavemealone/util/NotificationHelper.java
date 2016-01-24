@@ -73,8 +73,8 @@ public class NotificationHelper {
             android.support.v4.app.NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(aContext)
                             .setSmallIcon(R.drawable.ic_contact_phone_white_48dp)
-                            .setContentTitle("Only calls from contacts allowed")
-                            .setContentText("Click to open settings");
+                            .setContentTitle(aContext.getString(R.string.only_contacts_allowed_notification_title))
+                            .setContentText(aContext.getString(R.string.only_contacts_allowed_notification_subtitle));
             PendingIntent settingsPendingIntent =
                     PendingIntent.getActivity(
                             aContext,
@@ -114,7 +114,7 @@ public class NotificationHelper {
         android.support.v4.app.NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(aContext)
                         .setSmallIcon(R.drawable.ic_sync_white_48dp)
-                        .setContentTitle("Syncing K-Tipp blocklist");
+                        .setContentTitle(aContext.getString(R.string.notificaion_syncing_blocklist_title));
         Notification notification = mBuilder.build();
 
         notification.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
