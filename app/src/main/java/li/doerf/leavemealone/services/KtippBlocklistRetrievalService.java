@@ -31,6 +31,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
+import li.doerf.leavemealone.R;
 import li.doerf.leavemealone.db.AloneSQLiteHelper;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
 import li.doerf.leavemealone.db.tables.PhoneNumberSource;
@@ -48,6 +49,7 @@ import li.doerf.leavemealone.util.PhoneNumberHelper;
  */
 public class KtippBlocklistRetrievalService extends IntentService {
     private final String LOGTAG = getClass().getSimpleName();
+    private int myNotificationId;
 
     public KtippBlocklistRetrievalService() {
         super("KtippBlocklistRetrievalService");
@@ -80,13 +82,13 @@ public class KtippBlocklistRetrievalService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(LOGTAG, "onHandleIntent");
-        int notificationId = 0;
+        myNotificationId = 0;
 
         try {
-            notificationId = NotificationHelper.showSyncingNotification(getBaseContext());
+            myNotificationId = NotificationHelper.showSyncingNotification(getBaseContext());
             doSync();
         } finally {
-            NotificationHelper.hideSyncingNotification(getBaseContext(), notificationId);
+            NotificationHelper.hideSyncingNotification(getBaseContext(), myNotificationId);
         }
     }
 
@@ -95,6 +97,7 @@ public class KtippBlocklistRetrievalService extends IntentService {
         SQLiteDatabase db;
 
         try {
+            NotificationHelper.updateSyncingNotification( getBaseContext(), myNotificationId, getString(R.string.notification_sync_initial_page));
             String content = fetchPage(0);
 
             String sourceDate = extractSubString(content, "Letzte Aktualisierung:", "<");
@@ -115,6 +118,8 @@ public class KtippBlocklistRetrievalService extends IntentService {
             result = cleanupEntries(context, result);
             //Log.d(LOGTAG, "cleaned result size: " + result.size());
             //Log.d(LOGTAG, "cleaned result: " + result);
+
+            NotificationHelper.updateSyncingNotification( getBaseContext(), myNotificationId, getString(R.string.notification_sync_saving_numbers));
 
             // db: insert new entries
             db = AloneSQLiteHelper.getInstance(context).getWritableDatabase();
@@ -193,6 +198,10 @@ public class KtippBlocklistRetrievalService extends IntentService {
 
         // handle remaining pages
         for (int p = 1; p <= lastPage; p++) {
+            String notifyText = getString(R.string.notification_sync_subtitle_prefix,
+                    p,
+                    lastPage);
+            NotificationHelper.updateSyncingNotification( getBaseContext(), myNotificationId, notifyText);
             content = fetchPage(p);
             doc = Jsoup.parse(content);
             ret.addAll(parsePage(doc));
