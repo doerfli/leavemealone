@@ -30,13 +30,17 @@ public class NotificationHelper {
     public static int notify(Context aContext, Notification aNotification) {
         // Sets an ID for the notification
         int notificationId = NotificationHelper.getNotificationId();
+        return notify(aContext, aNotification, notificationId);
+    }
+
+    public static int notify(Context aContext, Notification aNotification, int aNotificationId) {
         // Gets an instance of the NotificationManager service
         NotificationManager notificationManager =
                 (NotificationManager) aContext.getSystemService(Context.NOTIFICATION_SERVICE);
         // Builds the notification and issues it.
-        notificationManager.notify(notificationId, aNotification);
-        Log.d(LOGTAG, "notification build and issued: " + notificationId);
-        return notificationId;
+        notificationManager.notify(aNotificationId, aNotification);
+        Log.d(LOGTAG, "notification build and issued: " + aNotificationId);
+        return aNotificationId;
     }
 
     /**
@@ -73,8 +77,8 @@ public class NotificationHelper {
             android.support.v4.app.NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(aContext)
                             .setSmallIcon(R.drawable.ic_contact_phone_white_48dp)
-                            .setContentTitle("Only calls from contacts allowed")
-                            .setContentText("Click to open settings");
+                            .setContentTitle(aContext.getString(R.string.only_contacts_allowed_notification_title))
+                            .setContentText(aContext.getString(R.string.only_contacts_allowed_notification_subtitle));
             PendingIntent settingsPendingIntent =
                     PendingIntent.getActivity(
                             aContext,
@@ -114,13 +118,26 @@ public class NotificationHelper {
         android.support.v4.app.NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(aContext)
                         .setSmallIcon(R.drawable.ic_sync_white_48dp)
-                        .setContentTitle("Syncing K-Tipp blocklist");
+                        .setContentTitle(aContext.getString(R.string.notification_syncing_blocklist_title));
         Notification notification = mBuilder.build();
 
         notification.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
         int notificationId = NotificationHelper.notify(aContext, notification);
         Log.d(LOGTAG, "issued notification: " + notificationId);
         return notificationId;
+    }
+
+    public static void updateSyncingNotification(Context aContext, int aNotificationId, String aSubtext) {
+        android.support.v4.app.NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(aContext)
+                        .setSmallIcon(R.drawable.ic_sync_white_48dp)
+                        .setContentTitle(aContext.getString(R.string.notification_syncing_blocklist_title))
+                        .setContentText(aSubtext);
+        Notification notification = mBuilder.build();
+
+        notification.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
+        NotificationHelper.notify(aContext, notification, aNotificationId);
+        Log.d(LOGTAG, "updated notification: " + aNotificationId);
     }
 
     public static void hideSyncingNotification(Context aContext, int aNotificationId) {
