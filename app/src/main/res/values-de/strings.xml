@@ -62,5 +62,6 @@
     <string name="notification_sync_saving_numbers">Speichere Nummern</string>
     <string name="call_blocked">Abruf abgewiesen</string>
     <string name="choose_function">Funktion wählen</string>
+    <string name="nav_call_log">Anrufliste anzeigen</string>
     <!-- Ä ä Ö ö Ü ü -->
 </resources>

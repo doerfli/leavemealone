@@ -66,4 +66,5 @@
     <string name="notification_sync_saving_numbers">Storing numbers</string>
     <string name="call_blocked">Call blocked</string>
     <string name="choose_function">Choose function</string>
+    <string name="nav_call_log">Show call log</string>
 </resources>

@@ -10,6 +10,10 @@
             android:id="@+id/nav_blocked_numbers_ktipp"
             android:icon="@drawable/ic_view_list_black_48dp"
             android:title="@string/blocked_numbers_ktipp" />
+        <item
+            android:id="@+id/nav_call_log"
+            android:icon="@drawable/ic_view_list_black_48dp"
+            android:title="@string/nav_call_log" />
     </group>
 
 </menu>

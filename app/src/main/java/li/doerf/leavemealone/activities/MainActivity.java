@@ -33,6 +33,7 @@ import li.doerf.leavemealone.db.tables.PhoneNumber;
 import li.doerf.leavemealone.services.KtippBlocklistRetrievalService;
 import li.doerf.leavemealone.ui.dialogs.AddNumberDialogFragment;
 import li.doerf.leavemealone.ui.fragments.BockedNumbersListFragment;
+import li.doerf.leavemealone.ui.fragments.CallLogFragment;
 import li.doerf.leavemealone.util.NotificationHelper;
 
 public class MainActivity extends AppCompatActivity
@@ -158,6 +159,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_blocked_numbers_ktipp) {
             myBockedNumbersFragment = BockedNumbersListFragment.newInstance(new String[] {"manual"});
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myBockedNumbersFragment).commit();
+        } else if (id == R.id.nav_call_log) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, CallLogFragment.newInstance()).commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
