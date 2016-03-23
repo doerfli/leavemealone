@@ -50,7 +50,7 @@
     <string name="ok">Ok</string>
     <string name="dialog_permission_request_title">Permission request</string>
     <string name="dialog_permission_request_READ_PHONE_STATE_EXPLANATION">This application requires access to incoming phone calls to intercept incoming calls. Without the permission "make and manage phone calls" the callblocker feature will not work. Please allow the app access to it in the next dialog.</string>
-    <string name="dialog_permission_request_READ_CONTACTS_EXPLANATION">This application requires access to contacts to allow calls from contacts. Without the permission "" this feature will not work. Please allow the app access to it in the next dialog.</string>
+    <string name="dialog_permission_request_READ_CONTACTS_EXPLANATION">This application requires access to contacts to allow calls from contacts. Without the permission "access contacts" this feature will not work. Please allow the app access to it in the next dialog.</string>
     <string name="title_about">About</string>
     <string name="about_application_name_version">Leave Me Alone</string>
     <string name="version_placeholder">x.y</string>
@@ -64,4 +64,6 @@
     <string name="only_contacts_allowed_notification_subtitle">Click to open settings</string>
     <string name="notification_sync_subtitle_prefix">Retrieving page %1$d/%2$d</string>
     <string name="notification_sync_saving_numbers">Storing numbers</string>
+    <string name="call_blocked">Call blocked</string>
+    <string name="choose_function">Choose function</string>
 </resources>

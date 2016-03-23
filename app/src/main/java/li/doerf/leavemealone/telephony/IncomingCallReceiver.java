@@ -186,7 +186,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         android.support.v4.app.NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(aContext)
                         .setSmallIcon(R.drawable.ic_not_interested_white_24dp)
-                        .setContentTitle("Call blocked")
+                        .setContentTitle(aContext.getString(R.string.call_blocked))
                         .setContentText(incomingNumber + " (" + aName + ")");
 
         Intent showCallLog = new Intent();

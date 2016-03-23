@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Ä ä Ö ö Ü ü -->
+    <string name="app_name">Leave me alone</string>
+
+    <string name="navigation_drawer_open">Navigation Drawer öffnen</string>
+    <string name="navigation_drawer_close">Navigation Drawer schliessen</string>
+
+    <string name="action_settings">Optionen</string>
+    <string name="blocked_numbers">Meine Liste</string>
+    <string name="blocked_numbers_ktipp">K-Tipp Liste</string>
+    <string name="onoff_switch">Ein/Aus Schalter</string>
+    <string name="hint_number">Nummer</string>
+    <string name="hint_name">Name</string>
+    <string name="add">Hinzufügen</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="pref_title_general">Allgemein</string>
+    <string name="pref_title_on_off">Call blocker einschalten</string>
+    <string name="pref_summary_on_off">Alle Anrufe von Nummern in der Liste abweisen</string>
+    <string name="pref_title_filters">Filter</string>
+    <string name="pref_title_always_allow_contacts">Anrufe aus Adressbuch immer erlauben</string>
+    <string name="pref_summary_always_allow_contacts">Anrufe von Nummern aus dem Adressbuch werden nie abgewiesen</string>
+    <string name="pref_title_only_allow_contacts">Nur Anrufe aus dem Adressbuch erlauben</string>
+    <string name="pref_summary_only_allow_contacts">Anrufe von Nummer die nicht im Adressbuch sind werden immer abgewiesen</string>
+    <string name="pref_title_sync_enable">Synchronisation einschalten</string>
+    <string name="pref_summary_sync_enable">Inhalt der K-Tipp Liste wird automatisch im definierten Intervall heruntergeladen</string>
+    <string name="pref_title_sync_intervale">Synchronisations Intervall</string>
+    <string name="pref_summary_sync_interval">Wie oft die K-Tipp Liste heruntergeladen werden soll</string>
+    <string name="number_invalid">Bitte gültige Nummer eingeben</string>
+    <string name="action_delete">Löschen</string>
+    <string name="number_added">Nummer hinzugefügt</string>
+    <string name="numbers_deleted">Nummer(n) gelöscht</string>
+    <string name="action_sync">Synchronisieren</string>
+    <string name="call_blocker_enabled">Call Blocker aktiviert</string>
+    <string name="call_blocker_disabled">Call Blocker deaktiviert</string>
+    <string name="action_acount">Über</string>
+    <string name="about_title">Lizenz</string>
+    <string name="copyright_notice"><![CDATA[Copyright 2016 Marc Doerflinger <leavemealone@bytes.li> und Patrick Ammann <pammann@gmx.net>]]></string>
+    <string name="license_text">Apache License, Version 2.0, January 2004</string>
+    <string name="license_details">Lizenz Details: https://github.com/doerfli/leavemealone/blob/master/LICENSE.txt</string>
+    <string name="contat_title">Kontakt</string>
+    <string name="contact_text">Wenn du Fragen hast, melde dich bitte unter \nleavemealone@bytes.li</string>
+    <string name="support_donation_text">Du kannst uns mit einer Spende unterstützen\nhttps://www.paypal.me/MarcDoerflinger</string>
+    <string name="pref_title_syncronization">Synchronisation</string>
+    <string name="pref_title_dialog_interval">Wie oft die K-Tipp Liste synchronisiert werden soll</string>
+    <string name="ok">Ok</string>
+    <string name="dialog_permission_request_title">Berechtigung erlauben</string>
+    <string name="dialog_permission_request_READ_PHONE_STATE_EXPLANATION">Diese App benötigt Zugriff auf eingehende Anrufe. Ohne diese Berechtigung funktioniert der Call Blocker nicht. Bitte erlaube den Zugriff im nachfolgenden Dialog.</string>
+    <string name="dialog_permission_request_READ_CONTACTS_EXPLANATION">Diese App benötigt Zugriff auf das Adressbuch. Ohne diese Berechtigung funktioniert der Call Blocker nicht korrekt. Bitte erlaube den Zugriff im nachfolgenden Dialog.</string>
+    <string name="title_about">Über</string>
+    <string name="about_application_name_version">Leave Me Alone</string>
+    <string name="version_placeholder">x.y</string>
+    <string name="about_version_short">v</string>
+    <string name="sample_entry_add_new">Neue Einträge mit dem + Knopf erstellen</string>
+    <string name="sample_entry_remove">Einträge durch langen Klick entfernen</string>
+    <string name="sample_entry_sync">Wähle \'Synchronisieren\' aus dem Menü um die K-Tipp Liste herunterzuladen. </string>
+    <string name="notification_syncing_blocklist_title">Synchronisiere K-Tipp Liste</string>
+    <string name="notification_sync_initial_page">Lade erste Seite herunter</string>
+    <string name="only_contacts_allowed_notification_title">Nur Anrufe von Nummern aus dem Adressbuch erlaubt</string>
+    <string name="only_contacts_allowed_notification_subtitle">Klicken um die Optioen zu öffnen</string>
+    <string name="notification_sync_subtitle_prefix">Lade Seite %1$d/%2$d</string>
+    <string name="notification_sync_saving_numbers">Speichere Nummern</string>
+    <string name="call_blocked">Abruf abgewiesen</string>
+    <string name="choose_function">Funktion wählen</string>
+    <!-- Ä ä Ö ö Ü ü -->
+</resources>
