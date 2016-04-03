@@ -1,11 +1,6 @@
 package li.doerf.leavemealone.db.tables;
 
-import android.content.ContentValues;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
-import java.lang.reflect.Field;
-import java.util.Map;
 
 import li.doerf.leavemealone.db.annotations.Column;
 import li.doerf.leavemealone.db.annotations.Table;

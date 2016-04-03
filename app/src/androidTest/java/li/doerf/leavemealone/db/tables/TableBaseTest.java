@@ -1,14 +1,7 @@
 package li.doerf.leavemealone.db.tables;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.test.mock.MockContext;
-
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
-import li.doerf.leavemealone.db.AloneSQLiteHelper;
 
 /**
  * Created by moo on 29/01/15.

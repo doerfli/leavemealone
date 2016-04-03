@@ -31,7 +31,6 @@ import li.doerf.leavemealone.ui.dialogs.AddNumberDialogFragment;
 public class BockedNumbersListFragment extends Fragment implements MultiSelector.SelectableModeListener, BlockedNumbersAdapter.AdapterModelChangedListener {
     private final String LOGTAG = getClass().getSimpleName();
     private String[] myFilteredSources;
-    private RecyclerView myBlockedNumbersList;
     private BlockedNumbersAdapter myBlockedNumbersAdapter;
     private SQLiteDatabase myReadbableDb;
     private boolean myShowListMultiselectModeMenu = false;
@@ -58,11 +57,11 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         CoordinatorLayout view = (CoordinatorLayout) inflater.inflate(R.layout.fragment_blocked_numbers_list, container, false);
 
-        myBlockedNumbersList = (RecyclerView) view.findViewById(R.id.blocked_numbers_list);
-        myBlockedNumbersList.setHasFixedSize(true);
+        RecyclerView blockedNumbersList = (RecyclerView) view.findViewById(R.id.blocked_numbers_list);
+        blockedNumbersList.setHasFixedSize(true);
         LinearLayoutManager lm = new LinearLayoutManager(getContext());
-        myBlockedNumbersList.setLayoutManager(lm);
-        myBlockedNumbersList.setAdapter(myBlockedNumbersAdapter);
+        blockedNumbersList.setLayoutManager(lm);
+        blockedNumbersList.setAdapter(myBlockedNumbersAdapter);
 
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -104,11 +103,6 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
     public void onStart() {
         super.onStart();
         refreshList();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
     }
 
     @Override

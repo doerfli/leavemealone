@@ -92,12 +92,12 @@ public class NotificationHelper {
             notification.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
             notificationId = NotificationHelper.notify(aContext, notification);
             Log.d(LOGTAG, "issued notification: " + notificationId);
-            settings.edit().putInt(PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, notificationId).commit();
+            settings.edit().putInt(PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, notificationId).apply();
         } else {
             if (notificationId > -1) {
                 notificationManager.cancel(notificationId);
                 Log.d(LOGTAG, "cancelled notification: " + notificationId);
-                settings.edit().putInt(PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, -1).commit();
+                settings.edit().putInt(PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, -1).apply();
             }
         }
     }
@@ -109,7 +109,7 @@ public class NotificationHelper {
             NotificationManager notificationManager =
                     (NotificationManager) aContext.getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel(notificationId);
-            settings.edit().putInt(NotificationHelper.PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, -1).commit();
+            settings.edit().putInt(NotificationHelper.PREF_KEY_NOTIFICATION_ID_ONLY_FROM_CONTACTS, -1).apply();
         }
         setNotificationOnlyFromContacts(aContext);
     }

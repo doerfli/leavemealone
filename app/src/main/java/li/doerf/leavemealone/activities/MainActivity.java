@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(aContext);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean(aContext.getString(R.string.pref_key_master_switch), isChecked);
-        editor.commit();
+        editor.apply();
         Log.i(LOGTAG, "app master switch: " + isChecked);
 
         NotificationHelper.setNotificationOnlyFromContacts(aContext);

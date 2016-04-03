@@ -43,7 +43,7 @@ public class SettingsActivity extends AppCompatActivity {
                     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
                     SharedPreferences.Editor editor = settings.edit();
                     editor.putBoolean(getString(R.string.pref_key_master_switch), false);
-                    editor.commit();
+                    editor.apply();
                     mySettingsFragment.refresh();
                 }
                 break;
@@ -59,7 +59,7 @@ public class SettingsActivity extends AppCompatActivity {
                     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
                     SharedPreferences.Editor editor = settings.edit();
                     editor.putBoolean(getString(R.string.pref_key_always_allow_contacts), false);
-                    editor.commit();
+                    editor.apply();
                     mySettingsFragment.refresh();
                 }
                 break;

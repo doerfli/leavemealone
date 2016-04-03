@@ -16,7 +16,7 @@
             android:id="@+id/number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="+xxxxxxxxxxx"
+            android:text="@string/phone_number_placeholder"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
             />
 
@@ -24,7 +24,7 @@
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name"
+            android:text="@string/name"
             android:layout_below="@+id/number"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"

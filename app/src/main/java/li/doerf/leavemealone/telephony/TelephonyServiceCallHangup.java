@@ -30,7 +30,7 @@ public class TelephonyServiceCallHangup implements ICallHangup {
         TelephonyManager tm = (TelephonyManager) aContext.getSystemService(Context.TELEPHONY_SERVICE);
         try {
             Class c = Class.forName(tm.getClass().getName());
-            Method m = c.getDeclaredMethod("getITelephony");
+            @SuppressWarnings("unchecked") Method m = c.getDeclaredMethod("getITelephony");
             m.setAccessible(true);
             ITelephony telephonyService = (ITelephony) m.invoke(tm);
             telephonyService.endCall();

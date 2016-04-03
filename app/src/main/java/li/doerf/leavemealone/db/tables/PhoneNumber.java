@@ -11,7 +11,6 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-import li.doerf.leavemealone.db.AloneSQLiteHelper;
 import li.doerf.leavemealone.db.annotations.Column;
 import li.doerf.leavemealone.db.annotations.Table;
 
@@ -178,7 +177,7 @@ public class PhoneNumber extends TableBase {
         return null;
     }
 
-    private static Map<Long, PhoneNumberSource> cache = new HashMap<Long, PhoneNumberSource>();
+    private static Map<Long, PhoneNumberSource> cache = new HashMap<>();
 
     @Override
     protected TableBase getReference(SQLiteDatabase db, String aReferenceName, Long anId) {

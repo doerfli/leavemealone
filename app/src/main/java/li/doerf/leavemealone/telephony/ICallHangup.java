@@ -14,6 +14,6 @@ public interface ICallHangup {
      *
      * @param aContext the context
      */
-    public boolean hangup(Context aContext);
+    boolean hangup(Context aContext);
 
 }

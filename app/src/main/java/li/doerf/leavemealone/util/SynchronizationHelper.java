@@ -8,8 +8,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import java.security.acl.LastOwnerException;
-
 import li.doerf.leavemealone.R;
 import li.doerf.leavemealone.services.KtippBlocklistRetrievalService;
 
