@@ -2,6 +2,8 @@ package li.doerf.leavemealone.ui.fragments;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,13 +15,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import li.doerf.leavemealone.R;
 import li.doerf.leavemealone.db.AloneSQLiteHelper;
 import li.doerf.leavemealone.db.tables.PhoneNumber;
 import li.doerf.leavemealone.ui.adapters.BlockedNumbersAdapter;
 import li.doerf.leavemealone.ui.adapters.MultiSelector;
+import li.doerf.leavemealone.ui.dialogs.AddNumberDialogFragment;
 
 /**
  * This fragment show the list of blocked numbers (loaded from the database).
@@ -54,13 +56,22 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_blocked_numbers_list, container, false);
+        CoordinatorLayout view = (CoordinatorLayout) inflater.inflate(R.layout.fragment_blocked_numbers_list, container, false);
 
         myBlockedNumbersList = (RecyclerView) view.findViewById(R.id.blocked_numbers_list);
         myBlockedNumbersList.setHasFixedSize(true);
         LinearLayoutManager lm = new LinearLayoutManager(getContext());
         myBlockedNumbersList.setLayoutManager(lm);
         myBlockedNumbersList.setAdapter(myBlockedNumbersAdapter);
+
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AddNumberDialogFragment newFragment = new AddNumberDialogFragment();
+                newFragment.show(getActivity().getSupportFragmentManager(), "addnumber");
+            }
+        });
 
         return view;
     }
