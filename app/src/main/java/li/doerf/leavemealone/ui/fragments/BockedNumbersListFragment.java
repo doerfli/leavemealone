@@ -1,5 +1,6 @@
 package li.doerf.leavemealone.ui.fragments;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -34,6 +35,7 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
     private BlockedNumbersAdapter myBlockedNumbersAdapter;
     private SQLiteDatabase myReadbableDb;
     private boolean myShowListMultiselectModeMenu = false;
+    private Cursor myCursor;
 
     public static BockedNumbersListFragment newInstance(String[] aFilteredSources) {
         BockedNumbersListFragment f = new BockedNumbersListFragment();
@@ -107,12 +109,16 @@ public class BockedNumbersListFragment extends Fragment implements MultiSelector
 
     @Override
     public void onDestroy() {
+        if ( myCursor != null ) {
+            myCursor.close();
+        }
         myReadbableDb = null;
         super.onDestroy();
     }
 
     public void refreshList() {
-        myBlockedNumbersAdapter.swapCursor(PhoneNumber.listAllExcept(myReadbableDb, myFilteredSources));
+        myCursor = PhoneNumber.listAllExcept(myReadbableDb, myFilteredSources);
+        myBlockedNumbersAdapter.swapCursor(myCursor);
     }
 
     @Override

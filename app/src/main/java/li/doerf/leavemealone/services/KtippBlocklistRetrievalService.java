@@ -70,7 +70,7 @@ public class KtippBlocklistRetrievalService extends IntentService {
 
     private void doSync() {
         Context context = getBaseContext();
-        SQLiteDatabase db;
+        SQLiteDatabase db = null;
 
         try {
             NotificationHelper.updateSyncingNotification( getBaseContext(), myNotificationId, getString(R.string.notification_sync_initial_page));
@@ -80,6 +80,8 @@ public class KtippBlocklistRetrievalService extends IntentService {
             Log.d(LOGTAG, "source date: " + sourceDate);
 
             db = AloneSQLiteHelper.getInstance(context).getReadableDatabase();
+            db.beginTransaction();
+
             Property item = Property.findByKey(db, "ktipp_source_date");
             if (item != null) {
                 if (item.getValue().equals(sourceDate)) {
@@ -101,22 +103,20 @@ public class KtippBlocklistRetrievalService extends IntentService {
             db = AloneSQLiteHelper.getInstance(context).getWritableDatabase();
             Property.update(db, "ktipp_source_date", sourceDate);
 
-//            db.beginTransaction();
             PhoneNumberSource source = PhoneNumberSource.update(db, "_ktipp");
             DateTime now = DateTime.now(); // must be same for all
             for (Map<String, String> map : result) {
-                // TODO insert/update is very slow when done repeately. Implement a insert method that takes a list of elements to insert
-                // and use beginTransaction/endTransaction around the insert, then all insert should be done in one batch which is said to be faster.
                 PhoneNumber.update(db, source, map.get("number"), map.get("name"), now);
             }
             // db: remove old entries
             PhoneNumber.deleteOldEntries(db, source, now);
-//            db.setTransactionSuccessful();
-            // TODO update ui when sync complete
+            db.setTransactionSuccessful();
         } catch (IOException e) {
             Log.e(LOGTAG, "caught IOException", e);
         } finally {
-//            db.endTransaction();
+            if ( db != null ) {
+                db.endTransaction();
+            }
             Log.d(LOGTAG, "finished");
         }
     }

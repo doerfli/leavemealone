@@ -48,20 +48,28 @@ public class PhoneNumberSource extends TableBase {
     }
 
     public static PhoneNumberSource findByName(SQLiteDatabase db, String aName) {
-        PhoneNumberSource item = new PhoneNumberSource();
-        Cursor c = db.query(
-                item.getTableName(),
-                item.getColumnNames(),
-                "name = ?",
-                new String[]{aName},
-                null,
-                null,
-                "name");
+        Cursor c = null;
 
-        if (c.moveToFirst()) {
-            return PhoneNumberSource.create(c);
+        try {
+            PhoneNumberSource item = new PhoneNumberSource();
+            c = db.query(
+                    item.getTableName(),
+                    item.getColumnNames(),
+                    "name = ?",
+                    new String[]{aName},
+                    null,
+                    null,
+                    "name");
+
+            if (c.moveToFirst()) {
+                return PhoneNumberSource.create(c);
+            }
+            return null;
+        } finally {
+            if ( c != null ) {
+                c.close();
+            }
         }
-        return null;
     }
 
     @Override

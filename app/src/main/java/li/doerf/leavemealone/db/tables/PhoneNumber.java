@@ -142,66 +142,89 @@ public class PhoneNumber extends TableBase {
     }
 
     public static PhoneNumber findByNumber(SQLiteDatabase db, String aNumber) {
-        PhoneNumber item = new PhoneNumber();
-        Cursor c = db.query(
-                item.getTableName(),
-                item.getColumnNames(),
-                "number LIKE ?",
-                new String[] { aNumber + "%" },
-                null,
-                null,
-                "number");
+        Cursor c = null;
 
-        if (c.moveToFirst()) {
-            return PhoneNumber.create(db, c);
+        try {
+            PhoneNumber item = new PhoneNumber();
+            c = db.query(
+                    item.getTableName(),
+                    item.getColumnNames(),
+                    "number LIKE ?",
+                    new String[]{aNumber + "%"},
+                    null,
+                    null,
+                    "number");
+
+            if (c.moveToFirst()) {
+                return PhoneNumber.create(db, c);
+            }
+
+            return null;
+        } finally {
+            if ( c != null ) {
+                c.close();
+            }
         }
-
-        return null;
     }
 
     public static PhoneNumber findBySourceAndNumber(SQLiteDatabase db, PhoneNumberSource aSource, String aNumber) {
-        PhoneNumber item = new PhoneNumber();
-        Cursor c = db.query(
-                item.getTableName(),
-                item.getColumnNames(),
-                "source = ? AND number = ?",
-                new String[] { aSource.getId().toString(), aNumber },
-                null,
-                null,
-                "number");
+        Cursor c = null;
 
-        if (c.moveToFirst()) {
-            return PhoneNumber.create(db, c);
+        try {
+            PhoneNumber item = new PhoneNumber();
+            c = db.query(
+                    item.getTableName(),
+                    item.getColumnNames(),
+                    "source = ? AND number = ?",
+                    new String[]{aSource.getId().toString(), aNumber},
+                    null,
+                    null,
+                    "number");
+
+            if (c.moveToFirst()) {
+                return PhoneNumber.create(db, c);
+            }
+
+            return null;
+        } finally {
+            if ( c != null ) {
+                c.close();
+            }
         }
-
-        return null;
     }
 
     private static Map<Long, PhoneNumberSource> cache = new HashMap<>();
 
     @Override
     protected TableBase getReference(SQLiteDatabase db, String aReferenceName, Long anId) {
-        if ("source".equals(aReferenceName)) {
-            PhoneNumberSource item = cache.get(anId);
-            if (item != null) {
-                return item;
-            }
-            item = new PhoneNumberSource();
-            Cursor c = db.query(
-                    item.getTableName(),
-                    item.getColumnNames(),
-                    "_id = ?",
-                    new String[]{anId.toString()},
-                    null,
-                    null,
-                    "_id");
+        Cursor c = null;
+        try {
+            if ("source".equals(aReferenceName)) {
+                PhoneNumberSource item = cache.get(anId);
+                if (item != null) {
+                    return item;
+                }
+                item = new PhoneNumberSource();
+                c = db.query(
+                        item.getTableName(),
+                        item.getColumnNames(),
+                        "_id = ?",
+                        new String[]{anId.toString()},
+                        null,
+                        null,
+                        "_id");
 
-            if (c.moveToFirst()) {
-                item = PhoneNumberSource.create(c);
-                cache.put(anId, item);
-                return item;
+                if (c.moveToFirst()) {
+                    item = PhoneNumberSource.create(c);
+                    cache.put(anId, item);
+                    return item;
+                }
+            }
+            return null;
+        } finally {
+            if ( c != null ) {
+                c.close();
             }
         }
-        return null;
     }
 }

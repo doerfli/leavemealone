@@ -58,21 +58,29 @@ public class Property extends TableBase {
     }
 
     public static Property findByKey(SQLiteDatabase db, String aKey) {
-        Property item = new Property();
-        Cursor c = db.query(
-                item.getTableName(),
-                item.getColumnNames(),
-                "key = ?",
-                new String[] {aKey},
-                null,
-                null,
-                "key");
+        Cursor c = null;
 
-        if (c.moveToFirst()) {
-            return Property.create(db, c);
+        try {
+            Property item = new Property();
+            c = db.query(
+                    item.getTableName(),
+                    item.getColumnNames(),
+                    "key = ?",
+                    new String[]{aKey},
+                    null,
+                    null,
+                    "key");
+
+            if (c.moveToFirst()) {
+                return Property.create(db, c);
+            }
+
+            return null;
+        } finally {
+            if ( c != null ) {
+                c.close();
+            }
         }
-
-        return null;
     }
 
     @Override
