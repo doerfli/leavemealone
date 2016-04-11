@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_sync_interval_entries">
+        <!--<item>Once a minute</item>-->
+        <!--<item>Once a hour</item>-->
+        <item>Zweimal pro Tag</item>
+        <item>Einmal pro Tag</item>
+        <item>Einmal pro Woche</item>
+    </string-array>
+    <string-array name="pref_sync_interval_values">
+        <!--<item>onceaminute</item>-->
+        <!--<item>onceahour</item>-->
+        <item>twiceaday</item>
+        <item>onceaday</item>
+        <item>onceaweek</item>
+    </string-array>
+</resources>
