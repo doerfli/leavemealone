@@ -47,7 +47,9 @@ public class PhoneNumberHelper {
         Phonenumber.PhoneNumber swissNumberProto;
         try {
             swissNumberProto = pnu.parse(aNumber, countryIso);
-            return pnu.isValidNumber(swissNumberProto);
+            return pnu.isValidNumber(swissNumberProto)
+                    // ignore ivory coast numbers (libphonenumber does not recognize those properly)
+                    || swissNumberProto.getCountryCode() == 225 ;
         } catch (NumberParseException e) {
             Log.w(LOGTAG, "isValid caught NumberParseException: number=" + aNumber);
             return false;
