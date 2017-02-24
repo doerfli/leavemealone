@@ -82,5 +82,11 @@
         android:autoLink="all"
         android:text="@string/license_details"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/card_margin"
+        android:autoLink="all"
+        android:text="@string/privacy_policy_link"/>
 
 </LinearLayout>

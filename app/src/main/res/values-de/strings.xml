@@ -43,6 +43,7 @@
     <string name="copyright_notice"><![CDATA[Copyright 2016 Marc Doerflinger <leavemealone@bytes.li> und Patrick Ammann <pammann@gmx.net>]]></string>
     <string name="license_text">Apache License, Version 2.0, January 2004</string>
     <string name="license_details">Lizenz Details: https://github.com/doerfli/leavemealone/blob/master/LICENSE.txt</string>
+    <string name="privacy_policy_link">Privacy policy: http://doerfli.github.io/leavemealone/privacy-policy.html</string>
     <string name="contat_title">Kontakt</string>
     <string name="contact_text">Wenn du Fragen hast, melde dich bitte unter \nleavemealone@bytes.li</string>
     <string name="support_donation_text">Du kannst uns mit einer Spende unterstützen\nhttps://www.paypal.me/MarcDoerflinger</string>
@@ -66,10 +67,12 @@
     <string name="only_contacts_allowed_notification_subtitle">Klicken um die Optioen zu öffnen</string>
     <string name="notification_sync_subtitle_prefix">Lade Seite %1$d/%2$d</string>
     <string name="notification_sync_saving_numbers">Speichere Nummern</string>
-    <string name="call_blocked">Abruf abgewiesen</string>
+    <string name="call_blocked">Anruf abgewiesen</string>
     <string name="choose_function">Funktion wählen</string>
     <string name="phone_number_placeholder">+xxxxxxxxxxx</string>
     <string name="name">Name</string>
     <string name="application_icon">app icon</string>
+    <string name="action_privacy_policy">Privacy policy</string>
+    <string name="title_privacy_policy">Privacy policy</string>
     <!-- Ä ä Ö ö Ü ü -->
 </resources>

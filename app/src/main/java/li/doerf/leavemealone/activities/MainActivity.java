@@ -127,6 +127,12 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
+        if (id == R.id.action_privacy_policy) {
+            Intent i = new Intent(getBaseContext(), PrivacyPolicyActivity.class);
+            startActivity(i);
+            return true;
+        }
+
         if (id == R.id.action_sync) {
             Intent i = new Intent(getBaseContext(), KtippBlocklistRetrievalService.class);
             startService(i);

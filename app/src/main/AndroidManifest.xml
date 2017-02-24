@@ -36,6 +36,11 @@
             android:parentActivityName=".activities.MainActivity" >
         </activity>
 
+        <activity
+            android:name=".activities.PrivacyPolicyActivity"
+            android:parentActivityName=".activities.MainActivity" >
+        </activity>
+
         <receiver android:name=".telephony.IncomingCallReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />

@@ -41,6 +41,7 @@
     <string name="copyright_notice"><![CDATA[Copyright 2016 Marc Doerflinger <leavemealone@bytes.li> and Patrick Ammann <pammann@gmx.net>]]></string>
     <string name="license_text">Apache License, Version 2.0, January 2004</string>
     <string name="license_details">License details: https://github.com/doerfli/leavemealone/blob/master/LICENSE.txt</string>
+    <string name="privacy_policy_link">Privacy policy: http://doerfli.github.io/leavemealone/privacy-policy.html</string>
     <string name="contat_title">Contact</string>
     <string name="contact_text">If you have any questions, please contact us at\nleavemealone@bytes.li</string>
     <string name="support_donation_text">You can support us by making a donation at\nhttps://www.paypal.me/MarcDoerflinger</string>
@@ -69,4 +70,6 @@
     <string name="phone_number_placeholder">+xxxxxxxxxxx</string>
     <string name="name">Name</string>
     <string name="application_icon">app icon</string>
+    <string name="action_privacy_policy">Privacy policy</string>
+    <string name="title_privacy_policy">Privacy policy</string>
 </resources>
