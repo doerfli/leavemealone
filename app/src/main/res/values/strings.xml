@@ -72,4 +72,5 @@
     <string name="application_icon">app icon</string>
     <string name="action_privacy_policy">Privacy policy</string>
     <string name="title_privacy_policy">Privacy policy</string>
+    <string name="channel_name">LeaveMeAlone</string>
 </resources>

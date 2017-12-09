@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
@@ -34,6 +35,11 @@ public class NotificationHelper {
     }
 
     public static int notify(Context aContext, Notification aNotification, int aNotificationId) {
+        if ( android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ) {
+            OreoNotificationHelper onh = new OreoNotificationHelper(aContext);
+            onh.createNotificationChannel();
+        }
+
         // Gets an instance of the NotificationManager service
         NotificationManager notificationManager =
                 (NotificationManager) aContext.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -77,6 +83,7 @@ public class NotificationHelper {
             android.support.v4.app.NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(aContext)
                             .setSmallIcon(R.drawable.ic_contact_phone_white_48dp)
+                            .setChannelId(OreoNotificationHelper.CHANNEL_ID)
                             .setContentTitle(aContext.getString(R.string.only_contacts_allowed_notification_title))
                             .setContentText(aContext.getString(R.string.only_contacts_allowed_notification_subtitle));
             PendingIntent settingsPendingIntent =
@@ -115,9 +122,15 @@ public class NotificationHelper {
     }
 
     public static int showSyncingNotification(Context aContext) {
+        if ( android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ) {
+            OreoNotificationHelper onh = new OreoNotificationHelper(aContext);
+            onh.createNotificationChannel();
+        }
+
         android.support.v4.app.NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(aContext)
                         .setSmallIcon(R.drawable.ic_sync_white_48dp)
+                        .setChannelId(OreoNotificationHelper.CHANNEL_ID)
                         .setContentTitle(aContext.getString(R.string.notification_syncing_blocklist_title));
         Notification notification = mBuilder.build();
 
@@ -128,9 +141,15 @@ public class NotificationHelper {
     }
 
     public static void updateSyncingNotification(Context aContext, int aNotificationId, String aSubtext) {
+        if ( android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ) {
+            OreoNotificationHelper onh = new OreoNotificationHelper(aContext);
+            onh.createNotificationChannel();
+        }
+
         android.support.v4.app.NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(aContext)
                         .setSmallIcon(R.drawable.ic_sync_white_48dp)
+                        .setChannelId(OreoNotificationHelper.CHANNEL_ID)
                         .setContentTitle(aContext.getString(R.string.notification_syncing_blocklist_title))
                         .setContentText(aSubtext);
         Notification notification = mBuilder.build();
@@ -141,6 +160,11 @@ public class NotificationHelper {
     }
 
     public static void hideSyncingNotification(Context aContext, int aNotificationId) {
+        if ( android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ) {
+            OreoNotificationHelper onh = new OreoNotificationHelper(aContext);
+            onh.createNotificationChannel();
+        }
+
         NotificationManager notificationManager =
                 (NotificationManager) aContext.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(aNotificationId);
